@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "-[BusiImportViewController dicWithModel]:BusiImportViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[CustomNotesNewViewController requestSuccess:SerialNum:]:CustomNotesNewViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[BusiTvlOrderViewController requestSuccess:SerialNum:]:BusiTvlOrderViewController.m">
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>

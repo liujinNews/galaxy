@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11762" systemVersion="16D32" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="BillBorrowingViewController">
+            <connections>
+                <outlet property="lab_cound" destination="wFp-3N-MD0" id="cKu-k9-yvz"/>
+                <outlet property="lab_needMoney" destination="k5F-82-9QG" id="1cI-2k-c6l"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+                <outlet property="view_contentview" destination="Fak-PH-uur" id="E62-gh-vnm"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="eVx-1U-gmb">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="10"/>
+                    <color key="backgroundColor" red="0.96078431369999995" green="0.96078431369999995" blue="0.97647058819999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="10" id="blq-sQ-SFv"/>
+                    </constraints>
+                </imageView>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gws-k8-xU9">
+                    <rect key="frame" x="0.0" y="10" width="375" height="54"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="需还款金额" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="k5F-82-9QG">
+                            <rect key="frame" x="15" y="18" width="76.5" height="18"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wFp-3N-MD0">
+                            <rect key="frame" x="359.5" y="27" width="0.0" height="0.0"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="24"/>
+                            <color key="textColor" red="0.0078431372550000003" green="0.67843137249999996" blue="0.98823529409999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                    </subviews>
+                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstItem="k5F-82-9QG" firstAttribute="leading" secondItem="gws-k8-xU9" secondAttribute="leading" constant="15" id="2jq-Lq-M0o"/>
+                        <constraint firstAttribute="trailing" secondItem="wFp-3N-MD0" secondAttribute="trailing" constant="15" id="B9F-zG-yNM"/>
+                        <constraint firstAttribute="height" constant="54" id="JwM-lU-PhR"/>
+                        <constraint firstItem="k5F-82-9QG" firstAttribute="centerY" secondItem="gws-k8-xU9" secondAttribute="centerY" id="a95-nc-riN"/>
+                        <constraint firstItem="wFp-3N-MD0" firstAttribute="centerY" secondItem="gws-k8-xU9" secondAttribute="centerY" id="fRA-Oi-aan"/>
+                    </constraints>
+                </view>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="oDi-Mr-02Y">
+                    <rect key="frame" x="0.0" y="64" width="375" height="10"/>
+                    <color key="backgroundColor" red="0.96078431369999995" green="0.96078431369999995" blue="0.97647058819999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="10" id="Bzo-sB-xob"/>
+                        <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="10" id="UGe-lo-ZKq"/>
+                    </constraints>
+                </imageView>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Fak-PH-uur">
+                    <rect key="frame" x="0.0" y="74" width="375" height="593"/>
+                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                </view>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="eVx-1U-gmb" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="7Ou-hO-ZjN"/>
+                <constraint firstItem="Fak-PH-uur" firstAttribute="top" secondItem="oDi-Mr-02Y" secondAttribute="bottom" id="81Q-95-AL3"/>
+                <constraint firstItem="gws-k8-xU9" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="9ER-To-dhT"/>
+                <constraint firstAttribute="trailing" secondItem="Fak-PH-uur" secondAttribute="trailing" id="Hok-AB-Zwc"/>
+                <constraint firstItem="eVx-1U-gmb" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="IeU-Ek-Xiy"/>
+                <constraint firstAttribute="bottom" secondItem="Fak-PH-uur" secondAttribute="bottom" id="Kbb-7z-SSJ"/>
+                <constraint firstAttribute="trailing" secondItem="eVx-1U-gmb" secondAttribute="trailing" id="Pay-TF-2Zw"/>
+                <constraint firstAttribute="trailing" secondItem="gws-k8-xU9" secondAttribute="trailing" id="PqC-bN-0hx"/>
+                <constraint firstAttribute="trailing" secondItem="oDi-Mr-02Y" secondAttribute="trailing" id="TuD-4T-aiU"/>
+                <constraint firstItem="oDi-Mr-02Y" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="fAe-bA-5C6"/>
+                <constraint firstItem="Fak-PH-uur" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="ooM-ig-DE3"/>
+                <constraint firstItem="oDi-Mr-02Y" firstAttribute="top" secondItem="gws-k8-xU9" secondAttribute="bottom" id="srJ-ma-0Fx"/>
+                <constraint firstItem="gws-k8-xU9" firstAttribute="top" secondItem="eVx-1U-gmb" secondAttribute="bottom" id="yl7-yc-fAM"/>
+            </constraints>
+        </view>
+    </objects>
+</document>

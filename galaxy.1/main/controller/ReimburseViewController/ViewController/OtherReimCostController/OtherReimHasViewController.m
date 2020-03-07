@@ -1,0 +1,1598 @@
+//
+//  OtherReimHasViewController.m
+//  galaxy
+//
+//  Created by hfk on 2016/11/29.
+//  Copyright © 2016年 赵碚. All rights reserved.
+//
+
+#import "OtherReimHasViewController.h"
+
+@interface OtherReimHasViewController ()
+
+@end
+
+@implementation OtherReimHasViewController
+
+-(instancetype)init{
+    self = [super init];
+    if (self) {
+        self.FormDatas=[[OtherReimFormData alloc]initWithStatus:2];
+    }
+    return self;
+}
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.view.backgroundColor=Color_White_Same_20;
+    if (self.pushTaskId) {
+        self.FormDatas.str_taskId=self.pushTaskId;
+        self.FormDatas.str_procId=self.pushProcId;
+        self.FormDatas.str_flowCode=self.pushFlowCode;
+        self.FormDatas.str_userId=self.pushUserId;
+        self.FormDatas.str_expenseCode=self.pushExpenseCode;
+        self.FormDatas.int_comeStatus=[self.pushComeStatus integerValue];
+        if (!self.backIndex&&self.pushBackIndex) {
+            self.backIndex=self.pushBackIndex;
+        }
+    }
+    [self setTitle:nil backButton:YES];
+    [self createScrollView];
+    [self requestHasApp];
+}
+
+-(void)createDealBtns{
+    __weak typeof(self) weakSelf = self;
+    if (self.FormDatas.int_comeStatus==2||self.FormDatas.int_comeStatus==7) {
+        [self.dockView updateLookFormViewWithTitleArray:@[Custing(@"撤回", nil)]];
+        self.dockView.btnClickBlock = ^(NSInteger index) {
+            if (index==0){
+                [weakSelf reCallBack];
+            }
+        };
+    }else if(self.FormDatas.int_comeStatus==8){
+        [self.dockView updateLookFormViewWithTitleArray:@[Custing(@"催办", nil),Custing(@"撤回", nil)]];
+        self.dockView.btnClickBlock = ^(NSInteger index) {
+            if (index==0){
+                [weakSelf goUrge];
+            }else if (index==1){
+                [weakSelf reCallBack];
+            }
+        };
+    }else if(self.FormDatas.int_comeStatus==9){
+        [self.dockView updateLookFormViewWithTitleArray:@[Custing(@"催办", nil)]];
+        self.dockView.btnClickBlock = ^(NSInteger index) {
+            if (index==0){
+                [weakSelf goUrge];
+            }
+        };
+    }else if (self.FormDatas.int_comeStatus==3){
+        if ([self.FormDatas.str_canEndorse isEqualToString:@"1"]) {
+            [self.dockView updateLookFormViewWithTitleArray:@[Custing(@"加签", nil),Custing(@"退回", nil),Custing(@"同意", nil)]];
+            self.dockView.btnClickBlock = ^(NSInteger index) {
+                if (index==0) {
+                    [weakSelf dockViewClick:1];
+                }else if (index==1){
+                    [weakSelf dockViewClick:0];
+                }else if (index==2){
+                    [weakSelf dockViewClick:2];
+                }
+            };
+        }else{
+            [self.dockView updateLookFormViewWithTitleArray:@[Custing(@"退回", nil),Custing(@"同意", nil)]];
+            self.dockView.btnClickBlock = ^(NSInteger index) {
+                if (index==0){
+                    [weakSelf dockViewClick:0];
+                }else if (index==1){
+                    [weakSelf dockViewClick:2];
+                }
+            };
+        }
+    }else if (self.FormDatas.int_comeStatus==4){
+        [self.dockView updateLookFormViewWithTitleArray:@[Custing(@"确认支付" , nil)]];
+        self.dockView.btnClickBlock = ^(NSInteger index) {
+            if (index==0){
+                [weakSelf dockViewClick:3];
+            }
+        };
+    }
+}
+
+//MARK:完成后回来刷新
+-(void)createScrollView{
+    UIScrollView *scrollView = UIScrollView.new;
+    self.scrollView = scrollView;
+    scrollView.backgroundColor =Color_White_Same_20;
+    scrollView.showsVerticalScrollIndicator=NO;
+    scrollView.delegate=self;
+    [self.view addSubview:scrollView];
+    if (self.FormDatas.int_comeStatus==2||self.FormDatas.int_comeStatus==3||self.FormDatas.int_comeStatus==4||self.FormDatas.int_comeStatus==7||self.FormDatas.int_comeStatus==8||self.FormDatas.int_comeStatus==9) {
+        [self.scrollView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.left.right.equalTo(self.view);
+            make.bottom.equalTo(self.view).offset(@-50);
+        }];
+        
+        self.dockView=[[DoneBtnView alloc]initWithFrame:CGRectMake(0, Main_Screen_Height-NavigationbarHeight-50, Main_Screen_Width, 50)];
+        self.dockView.userInteractionEnabled=YES;
+        [self.view addSubview:self.dockView];
+        [self.dockView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.right.bottom.equalTo(self.view);
+            make.height.equalTo(@50);
+        }];
+    }else{
+        [self.scrollView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.edges.equalTo(self.view);
+        }];
+    }
+    [self createContentView];
+    [self createMainView];
+}
+-(void)createContentView{
+    self.contentView =[[BottomView alloc]init];
+    self.contentView.userInteractionEnabled=YES;
+    self.contentView.backgroundColor=Color_White_Same_20;
+    [self.scrollView addSubview:self.contentView];
+    
+    [self.contentView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self.scrollView);
+        make.width.equalTo(self.scrollView);
+    }];
+}
+//MARK:创建主视图
+-(void)createMainView{
+
+    _View_Requestor=[[UIView alloc]init];
+    _View_Requestor.backgroundColor=Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_View_Requestor];
+    [_View_Requestor makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.contentView.top).offset(@10);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    _View_ApplyAmount=[[UIView alloc]init];
+    _View_ApplyAmount.backgroundColor=Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_View_ApplyAmount];
+    [_View_ApplyAmount makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.View_Requestor.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    _View_Capitalized=[[UIView alloc]init];
+    _View_Capitalized.backgroundColor=Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_View_Capitalized];
+    [_View_Capitalized makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.View_ApplyAmount.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    _View_LoanAmount=[[UIView alloc]init];
+    _View_LoanAmount.backgroundColor=Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_View_LoanAmount];
+    [_View_LoanAmount makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.View_Capitalized.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    _View_ActualAmount=[[UIView alloc]init];
+    _View_ActualAmount.backgroundColor=Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_View_ActualAmount];
+    [_View_ActualAmount makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.View_LoanAmount.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    _View_NoInvoice=[[UIView alloc]init];
+    _View_NoInvoice.backgroundColor=Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_View_NoInvoice];
+    [_View_NoInvoice makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.View_ActualAmount.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    _View_CustomTable=[[UITableView alloc]initWithFrame:CGRectZero style:UITableViewStylePlain];
+    _View_CustomTable.backgroundColor=Color_WhiteWeak_Same_20;
+    _View_CustomTable.delegate=self;
+    _View_CustomTable.dataSource=self;
+    _View_CustomTable.scrollEnabled=NO;
+    _View_CustomTable.separatorStyle=UITableViewCellSeparatorStyleNone;
+    [self.contentView addSubview:_View_CustomTable];
+    [_View_CustomTable makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.View_NoInvoice.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    _View_PayeeTable=[[UITableView alloc]initWithFrame:CGRectZero style:UITableViewStylePlain];
+    _View_PayeeTable.backgroundColor=Color_WhiteWeak_Same_20;
+    _View_PayeeTable.delegate=self;
+    _View_PayeeTable.dataSource=self;
+    _View_PayeeTable.scrollEnabled=NO;
+    _View_PayeeTable.separatorStyle=UITableViewCellSeparatorStyleNone;
+    [self.contentView addSubview:_View_PayeeTable];
+    [_View_PayeeTable makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.View_CustomTable.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    _ReimShareMainView=[[ReimShareMainView alloc]init];
+    _ReimShareMainView.backgroundColor=Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_ReimShareMainView];
+    [_ReimShareMainView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.View_PayeeTable.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    _ReimShareDeptSumView = [[BaseFormSumView alloc]init];
+    _ReimShareDeptSumView.backgroundColor = Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_ReimShareDeptSumView];
+    [_ReimShareDeptSumView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.ReimShareMainView.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    _view_line1=[[UIView alloc]init];
+    [self.contentView addSubview:_view_line1];
+    [_view_line1 makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.ReimShareDeptSumView.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    _View_ClaimType=[[UIView alloc]init];
+    _View_ClaimType.backgroundColor=Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_View_ClaimType];
+    [_View_ClaimType makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.view_line1.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    _View_Reason=[[UIView alloc]init];
+    _View_Reason.backgroundColor=Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_View_Reason];
+    [_View_Reason makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.View_ClaimType.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    _SubmitPersonalView=[[SubmitPersonalView alloc]init];
+    [self.contentView addSubview:_SubmitPersonalView];
+    [_SubmitPersonalView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.View_Reason.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+
+    _view_line2=[[UIView alloc]init];
+    [self.contentView addSubview:_view_line2];
+    [_view_line2 makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.SubmitPersonalView.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    
+    _View_Beneficiaries=[[UIView alloc]init];
+    _View_Beneficiaries.backgroundColor=Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_View_Beneficiaries];
+    [_View_Beneficiaries makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.view_line2.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    _View_Project = [[UIView alloc]init];
+    _View_Project.backgroundColor = Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_View_Project];
+    [_View_Project mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.View_Beneficiaries.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    _View_Client = [[UIView alloc]init];
+    _View_Client.backgroundColor = Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_View_Client];
+    [_View_Client mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.View_Project.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    _View_Supplier = [[UIView alloc]init];
+    _View_Supplier.backgroundColor = Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_View_Supplier];
+    [_View_Supplier mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.View_Client.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+
+    
+    _View_EntertainApp=[[MulChooseShowView alloc]initWithStatus:2 withFlowCode:@"F0023"];
+    _View_EntertainApp.backgroundColor=Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_View_EntertainApp];
+    [_View_EntertainApp makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.View_Supplier.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    _View_VehicleSvcApp=[[MulChooseShowView alloc]initWithStatus:2 withFlowCode:@"F0024"];
+    _View_VehicleSvcApp.backgroundColor=Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_View_VehicleSvcApp];
+    [_View_VehicleSvcApp makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.View_EntertainApp.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    _View_FeeAppForm=[[MulChooseShowView alloc]initWithStatus:2 withFlowCode:@"F0012"];
+    _View_FeeAppForm.backgroundColor=Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_View_FeeAppForm];
+    [_View_FeeAppForm makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.View_VehicleSvcApp.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    _View_Estimated=[[UIView alloc]init];
+    _View_Estimated.backgroundColor=Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_View_Estimated];
+    [_View_Estimated makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.View_FeeAppForm.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    _View_OverBud=[[UIView alloc]init];
+    _View_OverBud.backgroundColor=Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_View_OverBud];
+    [_View_OverBud makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.View_Estimated.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    _View_StaffOutForm=[[MulChooseShowView alloc]initWithStatus:2 withFlowCode:@"F0016"];
+    _View_StaffOutForm.backgroundColor=Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_View_StaffOutForm];
+    [_View_StaffOutForm mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.View_OverBud.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    _View_PurchaseForm=[[MulChooseShowView alloc]initWithStatus:2 withFlowCode:@"F0005"];
+    _View_PurchaseForm.backgroundColor=Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_View_PurchaseForm];
+    [_View_PurchaseForm mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.View_StaffOutForm.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    _View_SpecialReqest=[[MulChooseShowView alloc]initWithStatus:2 withFlowCode:@"F0027"];
+    _View_SpecialReqest.backgroundColor=Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_View_SpecialReqest];
+    [_View_SpecialReqest mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.View_PurchaseForm.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    _View_EmployeeTrain=[[MulChooseShowView alloc]initWithStatus:2 withFlowCode:@"F0028"];
+    _View_EmployeeTrain.backgroundColor=Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_View_EmployeeTrain];
+    [_View_EmployeeTrain mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.View_SpecialReqest.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    _View_BorrowForm=[[MulChooseShowView alloc]initWithStatus:2 withFlowCode:@"F0006"];;
+    _View_BorrowForm.backgroundColor=Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_View_BorrowForm];
+    [_View_BorrowForm makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.View_EmployeeTrain.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    _View_DocumentNum=[[UIView alloc]init];
+    _View_DocumentNum.backgroundColor=Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_View_DocumentNum];
+    [_View_DocumentNum makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.View_BorrowForm.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    _View_Payee=[[UIView alloc]init];
+    _View_Payee.backgroundColor=Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_View_Payee];
+    [_View_Payee makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.View_DocumentNum.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    _View_BankAccount=[[UIView alloc]init];
+    _View_BankAccount.backgroundColor=Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_View_BankAccount];
+    [_View_BankAccount makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.View_Payee.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    _View_BankOutlets = [[UIView alloc]init];
+    _View_BankOutlets.backgroundColor = Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_View_BankOutlets];
+    [_View_BankOutlets mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.View_BankAccount.mas_bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    _View_BankName = [[UIView alloc]init];
+    _View_BankName.backgroundColor = Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_View_BankName];
+    [_View_BankName mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.View_BankOutlets.mas_bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    _View_BankCity = [[UIView alloc]init];
+    _View_BankCity.backgroundColor = Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_View_BankCity];
+    [_View_BankCity mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.View_BankName.mas_bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+
+    _View_PmtMethod=[[UIView alloc]init];
+    _View_PmtMethod.backgroundColor=Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_View_PmtMethod];
+    [_View_PmtMethod mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.View_BankCity.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    _view_line3=[[UIView alloc]init];
+    [self.contentView addSubview:_view_line3];
+    [_view_line3 makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.View_PmtMethod.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    _View_ReceiptOfInv=[[UIView alloc]init];
+    _View_ReceiptOfInv.backgroundColor=Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_View_ReceiptOfInv];
+    [_View_ReceiptOfInv makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.view_line3.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    _View_Reserved=[[UIView alloc]init];
+    _View_Reserved.backgroundColor=Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_View_Reserved];
+    [_View_Reserved makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.View_ReceiptOfInv.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    _View_Remark=[[UIView alloc]init];
+    _View_Remark.backgroundColor=Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_View_Remark];
+    [_View_Remark makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.View_Reserved.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    _View_CcToPeople=[[UIView alloc]init];
+    _View_CcToPeople.backgroundColor=Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_View_CcToPeople];
+    [_View_CcToPeople makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.View_Remark.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+
+    _View_AttachImg=[[UIView alloc]init];
+    _View_AttachImg.backgroundColor=Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_View_AttachImg];
+    [_View_AttachImg makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.View_CcToPeople.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    _View_Budget=[[UIView alloc]init];
+    _View_Budget.backgroundColor=Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_View_Budget];
+    [_View_Budget makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.View_AttachImg.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+
+    _View_Approve=[[UIView alloc]init];
+    _View_Approve.backgroundColor=Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_View_Approve];
+    [_View_Approve makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.View_Budget.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+    
+    _FormSignInfoView = [[FormSignInfoView alloc]init];
+    [self.contentView addSubview:_FormSignInfoView];
+    [_FormSignInfoView makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.View_Approve.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+
+    _View_Note=[[UIView alloc]init];
+    _View_Note.backgroundColor=Color_WhiteWeak_Same_20;
+    [self.contentView addSubview:_View_Note];
+    [_View_Note mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.FormSignInfoView.bottom);
+        make.left.right.equalTo(self.contentView);
+    }];
+}
+//MARK:-网络请求
+//第一次打开表单和保存后打开表单接口
+-(void)requestHasApp{
+    [[GPClient shareGPClient]REquestByPostWithPath:[self.FormDatas OpenFormUrl] Parameters:[self.FormDatas OpenFormParameters] Delegate:self SerialNum:0 IfUserCache:NO];
+}
+//MARK:获取审批记录
+-(void)requestApproveNote{
+    [YXSpritesLoadingView showWithText:Custing(@"光速加载中...",nil) andShimmering:NO andBlurEffect:NO];
+    [[GPClient shareGPClient]REquestByPostWithPath:[self.FormDatas ApproveNoteUrl] Parameters:[self.FormDatas ApproveNoteOrFlowChartOrPushLinkParameters] Delegate:self SerialNum:3 IfUserCache:NO];
+}
+-(void)goTo_Webview{
+    [YXSpritesLoadingView showWithText:Custing(@"光速加载中...",nil) andShimmering:NO andBlurEffect:NO];
+    [[GPClient shareGPClient]REquestByPostWithPath:[self.FormDatas getFlowChartUrl] Parameters:[self.FormDatas ApproveNoteOrFlowChartOrPushLinkParameters] Delegate:self SerialNum:11 IfUserCache:NO];
+}
+//MARK:打印链接
+-(void)GoToPush{
+    self.PrintfBtn.userInteractionEnabled=NO;
+    [[GPClient shareGPClient]REquestByPostWithPath:[self.FormDatas PrintLinkUrl] Parameters:[self.FormDatas ApproveNoteOrFlowChartOrPushLinkParameters] Delegate:self SerialNum:10 IfUserCache:NO];
+}
+//获取是否同意有审批权限
+-(void)requestGetApproval
+{
+    [YXSpritesLoadingView showWithText:Custing(@"光速加载中...",nil) andShimmering:NO andBlurEffect:NO];
+    NSDictionary *parameters = @{@"ExpenseCode":self.FormDatas.str_expenseCode,@"JobTitleCode":[NSString isEqualToNull:self.FormDatas.personalData.JobTitleCode]?self.FormDatas.personalData.JobTitleCode:@"",@"Amount":[NSString isEqualToNull:[NSString stringWithFormat:@"%@",self.FormDatas.str_ApprovalAmount]]?[NSString stringWithFormat:@"%@",self.FormDatas.str_ApprovalAmount]:@"0"};
+    NSString *url=[NSString stringWithFormat:@"%@",GETApprovalAuth];
+    [[GPClient shareGPClient]REquestByPostWithPath:url Parameters:parameters Delegate:self SerialNum:4 IfUserCache:NO];
+}
+//MARK:下载成功
+- (void)requestSuccess:(NSDictionary *)responceDic SerialNum:(int)serialNum {
+    [YXSpritesLoadingView dismiss];
+    self.dockView.userInteractionEnabled=YES;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:responceDic options:NSJSONWritingPrettyPrinted error:nil];
+    NSString *stri = [[NSString alloc] initWithData:jsonData  encoding:NSUTF8StringEncoding];
+    NSLog(@"string%@",stri);
+    self.FormDatas.dict_resultDict=responceDic;
+    NSString * success = [NSString stringWithFormat:@"%@",[responceDic objectForKey:@"success"]];
+    if ([success isEqualToString:@"0"]){
+        self.PrintfBtn.userInteractionEnabled=YES;
+        self.dockView.userInteractionEnabled=YES;
+        if ([[NSString stringWithFormat:@"%@",[responceDic objectForKey:@"resultCode"]] isEqualToString:@"1001"]) {
+            [self updateAprovalProcess:self.FormDatas.str_flowGuid WithProcId:[NSString stringWithFormat:@"%@",responceDic[@"procId"]]];
+        }else{
+            NSString * error = [responceDic objectForKey:@"msg"];
+            if (![error isKindOfClass:[NSNull class]]) {
+                [[GPAlertView sharedAlertView]showAlertText:self WithText:error duration:1.0];
+            }
+        }
+        return;
+    }
+    switch (serialNum) {
+        case 0:
+            [self.FormDatas DealWithFormBaseData];
+            if (self.FormDatas.str_OtherReimNavTitle) {
+                self.navigationItem.title = self.FormDatas.str_OtherReimNavTitle;
+            }
+            [self requestApproveNote];
+            break;
+        case 1:
+        {
+            NSString * successRespone = [NSString stringWithFormat:@"%@",[self.FormDatas.dict_resultDict objectForKey:@"msg"]];
+            [[GPAlertView sharedAlertView]showAlertText:self WithText:successRespone];
+            [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(goBackTo) userInfo:nil repeats:NO];
+        }
+            break;
+        case 2:
+        {
+            NSString * successRespone = [NSString stringWithFormat:@"%@",[self.FormDatas.dict_resultDict objectForKey:@"msg"]];
+            if ([NSString isEqualToNull:successRespone]) {
+                [[GPAlertView sharedAlertView]showAlertText:self WithText:successRespone];
+            }else{
+                [[GPAlertView sharedAlertView]showAlertText:self WithText:@"撤回成功"];
+            }
+            [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(goToReSubmit) userInfo:nil repeats:NO];
+        }
+            break;
+        case 3:
+            [self.FormDatas getApproveNoteData];
+            [self updateMainView];
+            [self createDealBtns];
+            break;
+        case 4:
+        {
+            self.FormDatas.str_IsApprovalAuthority=[NSString isEqualToNull:[NSString stringWithFormat:@"%@",[self.FormDatas.dict_resultDict objectForKey:@"result"]]]?[NSString stringWithFormat:@"%@",[self.FormDatas.dict_resultDict objectForKey:@"result"]]:@"0";
+            [self AgreeWithPay];
+        }
+            break;
+        case 10:
+        {
+            self.PrintfBtn.userInteractionEnabled=YES;
+            NSDictionary *dict=self.FormDatas.dict_resultDict[@"result"];
+            if (![dict isKindOfClass:[NSNull class]]) {
+                [self gotoPrintfForm:[SendEmailModel modelWithInfo:@{
+                                                                     @"link":[NSString stringWithFormat:@"%@",dict[@"link"]],
+                                                                     @"password":[NSString stringWithFormat:@"%@",dict[@"password"]],
+                                                                     @"title":[NSString stringWithFormat:@"%@",dict[@"taskName"]],
+                                                                     @"flowCode":self.FormDatas.str_flowCode,
+                                                                     @"requestor":self.FormDatas.personalData.Requestor
+                                                                     }]];
+                
+            }
+        }
+            break;
+        case 11:
+        {
+            [self goToFlowChartWithUrl:responceDic[@"result"]];
+        }
+            break;
+        default:
+            break;
+    }
+    
+}
+
+//MARK:请求失败
+-(void)requestFail:(NSString *)responceFail serialNum:(int)serialNum{
+    self.dockView.userInteractionEnabled=YES;
+    self.PrintfBtn.userInteractionEnabled=YES;
+    [YXSpritesLoadingView dismiss];
+    [[GPAlertView sharedAlertView]showAlertText:self WithText:Custing(@"网络请求失败", nil) duration:2.0];
+}
+-(void)goBackTo{
+    self.dockView.userInteractionEnabled=YES;
+    [self.navigationController popViewControllerAnimated:YES];
+}
+//MARK:撤回跳到重新提交
+-(void)goToReSubmit{
+    self.dockView.userInteractionEnabled=YES;
+    [self goToReSubmitWithModel:self.FormDatas];
+}
+//MARK:视图更新
+-(void)updateMainView{
+    
+    [self createMoreBtnWithArray:[self.FormDatas getMoreBtnList] WithDict:@{@"ProcId":self.FormDatas.str_procId,@"TaskId":self.FormDatas.str_taskId,@"FlowCode":self.FormDatas.str_flowCode}];
+
+    
+    [self updateRequestorView];
+    
+    [_SubmitPersonalView initOnlyApprovePersonalViewWithDate:self.FormDatas.arr_FormMainArray WithApproveModel:self.FormDatas withType:1];
+    
+    
+    for (MyProcurementModel *model in self.FormDatas.arr_FormMainArray) {
+        if ([[model.isShow stringValue]isEqualToString:@"1"]) {
+            if ([model.fieldName isEqualToString:@"TotalAmount"]) {
+                _int_RequestorLine=1;
+                [self updateApplyAmountViewWithModel:model];
+            }else if ([model.fieldName isEqualToString:@"CapitalizedAmount"]&&[[model.isShow stringValue]isEqualToString:@"1"]){
+                _int_RequestorLine=1;
+                [self updateCapitalizedAmountViewWithModel:model];
+            }else if ([model.fieldName isEqualToString:@"LoanAmount"]){
+                _int_RequestorLine=1;
+                [self updateLoanAmountViewWithModel:model];
+            }else if ([model.fieldName isEqualToString:@"ActualAmount"]){
+                _int_RequestorLine=1;
+                [self updateActualAmountViewWithModel:model];
+            }else if ([model.fieldName isEqualToString:@"NoInvAmount"]){
+                _int_RequestorLine=1;
+                [self updateNoInvAmountViewWithModel:model];
+            }else if ([model.fieldName isEqualToString:@"ClaimType"]){
+                _int_line1=1;
+                [self updateClaimTypeViewWithModel:model];
+            }else if ([model.fieldName isEqualToString:@"Reason"]){
+                _int_line1=1;
+                [self updateReasonViewWithModel:model];
+            }else if ([model.fieldName isEqualToString:@"BnfId"]){
+                _int_line2=1;
+                [self updateBeneficiariesViewWithModel:model];
+            }else if ([model.fieldName isEqualToString:@"ProjId"]&&[[model.isShow stringValue]isEqualToString:@"1"]){
+                _int_line2=1;
+                [self updateProjectViewWithModel:model];
+            }else if ([model.fieldName isEqualToString:@"ClientId"]&&[[model.isShow stringValue]isEqualToString:@"1"]){
+                _int_line2=1;
+                [self updateClientViewWithModel:model];
+            }else if ([model.fieldName isEqualToString:@"SupplierId"]&&[[model.isShow stringValue]isEqualToString:@"1"]){
+                _int_line2=1;
+                [self updateSupplierViewWithModel:model];
+            }else if ([model.fieldName isEqualToString:@"EntertainAppNumber"]){
+                _int_line2=1;
+                [self updateEntertainAppViewWithModel:model];
+            }else if ([model.fieldName isEqualToString:@"VehicleSvcAppNumber"]){
+                _int_line2=1;
+                [self updateVehicleSvcAppViewWithModel:model];
+            } else if ([model.fieldName isEqualToString:@"FeeAppNumber"]){
+                _int_line2=1;
+                [self updateFeeAppFormViewWithModel:model];
+            }else if ([model.fieldName isEqualToString:@"EstimatedAmount"]){
+                _int_line2=1;
+                [self updateEstimatedViewWithModel:model];
+            }else if ([model.fieldName isEqualToString:@"OverBudReason"]){
+                _int_line2=1;
+                [self updateOverBudViewWithModel:model];
+            }else if ([model.fieldName isEqualToString:@"StaffOutNumber"]&&[[model.isShow stringValue]isEqualToString:@"1"]){
+                _int_line2=1;
+                [self updateStaffOutNumberViewWithModel:model];
+            }else if ([model.fieldName isEqualToString:@"PurchaseNumber"]&&[[model.isShow stringValue]isEqualToString:@"1"]){
+                _int_line2=1;
+                [self updatePurchaseNumberViewWithModel:model];
+            }else if ([model.fieldName isEqualToString:@"SpecialRequirementsNumber"]&&[[model.isShow stringValue]isEqualToString:@"1"]){
+                _int_line2=1;
+                [self updateSpecialRequirementsNumberViewWithModel:model];
+            }else if ([model.fieldName isEqualToString:@"EmployeeTrainingNumber"]&&[[model.isShow stringValue]isEqualToString:@"1"]){
+                _int_line2=1;
+                [self updateEmployeeTrainingNumberViewWithModel:model];
+            }else if ([model.fieldName isEqualToString:@"AdvanceNumber"]){
+                _int_line2=1;
+                [self updateBorrowFormViewWithModel:model];
+            }else if ([model.fieldName isEqualToString:@"NumberOfDocuments"]){
+                _int_line2=1;
+                [self updateDocumentNumViewWithModel:model];
+            }else if ([model.fieldName isEqualToString:@"Payee"]){
+                _int_line2=1;
+                [self updatePayeeViewWithModel:model];
+            }else if ([model.fieldName isEqualToString:@"BankAccount"]){
+                _int_line2=1;
+                [self updateBankAccountViewWithModel:model];
+            }else if ([model.fieldName isEqualToString:@"BankOutlets"]&&[[model.isShow stringValue]isEqualToString:@"1"]) {
+                _int_line2=1;
+                [self updateBankOutletsViewWithModel:model];
+            }else if ([model.fieldName isEqualToString:@"BankName"]&&[[model.isShow stringValue]isEqualToString:@"1"]) {
+                _int_line2=1;
+                [self updateBankNameViewWithModel:model];
+            }else if ([model.fieldName isEqualToString:@"BankCity"]&&[[model.isShow stringValue]isEqualToString:@"1"]) {
+                _int_line2=1;
+                [self updateBankCityViewWithModel:model];
+            }else if ([model.fieldName isEqualToString:@"PmtMethod"]&&[[model.isShow stringValue]isEqualToString:@"1"]){
+                _int_line2=1;
+                [self updatePmtMethodViewWithModel:model];
+            }else if ([model.fieldName isEqualToString:@"IsReceiptOfInv"]) {
+                _int_line3=1;
+                [self updateReceiptOfInvViewWithModel:model];
+            }else if ([model.fieldName isEqualToString:@"Reserved1"]) {
+                _int_line3=1;
+                [self updateReservedViewWithModel:model];
+            }else if ([model.fieldName isEqualToString:@"Remark"]) {
+                _int_line3=1;
+                [self updateRemarkViewWithModel:model];
+            }else if ([model.fieldName isEqualToString:@"CcUsersName"]&&[[model.isShow stringValue]isEqualToString:@"1"]) {
+                _int_line3=1;
+                [self updateCcPeopleViewWithModel:model];
+            }else if ([model.fieldName isEqualToString:@"Attachments"]&&self.FormDatas.arr_totalFileArray.count!=0) {
+                _int_line3=1;
+                [self updateAttachImgViewWithModel:model];
+            }else if ([model.fieldName isEqualToString:@"ApprovalMode"]) {
+                if (self.FormDatas.int_comeStatus==3||self.FormDatas.int_comeStatus==4) {
+                    [self updateApproveViewWithModel:model];
+                }
+            }
+        }
+    }
+    
+    if (![self.FormDatas.arr_sonItem isKindOfClass:[NSNull class]]&&self.FormDatas.arr_sonItem.count!=0) {
+        _int_RequestorLine=1;
+        [self updateCustomTableView];
+    }
+    
+    //分摊数据显示
+    if (self.FormDatas.bool_ShareShow == YES) {
+        if (self.FormDatas.int_ShareShowModel == 1) {
+            if (self.FormDatas.arr_ShareDeptSumData.count > 0) {
+                _int_RequestorLine = 1;
+                [self updateReimShareViewWithType:2];
+            }
+        }else{
+            if (self.FormDatas.arr_ShareData.count > 0) {
+                _int_RequestorLine = 1;
+                [self updateReimShareViewWithType:1];
+            }
+        }
+    }
+    
+    if (self.FormDatas.dict_budgetInfo && self.FormDatas.dict_budgetInfo.count > 0) {
+        [self updateBudgetNote];
+    }
+    //签收记录
+    if (self.FormDatas.dict_SignInfo) {
+        [_FormSignInfoView updateView:self.FormDatas.dict_SignInfo];
+    }
+    //审批记录
+    if (self.FormDatas.arr_noteDateArray.count!=0) {
+        [self updateNotesTableView];
+    }
+    
+    if (self.FormDatas.bool_ThirDetailsShow&&self.FormDatas.arr_ThirDetailsDataArray.count!=0) {
+        [self updatePayeeTable];
+        [_View_PayeeTable reloadData];
+    }
+    
+    [self updateBottomView];
+}
+//MARK:更新申请人视图
+-(void)updateRequestorView{
+    [_View_Requestor updateConstraints:^(MASConstraintMaker *make) {
+        make.height.equalTo(@80);
+    }];
+    
+    UIImageView *requestorImage=[[UIImageView alloc]initWithFrame:CGRectMake(15, 11, 58, 58)];
+    if ([NSString isEqualToNull:self.FormDatas.personalData.RequestorPhotoGraph]) {
+        [requestorImage sd_setImageWithURL:[NSURL URLWithString:self.FormDatas.personalData.RequestorPhotoGraph]];
+    }else{
+        if (![NSString isEqualToNull:self.FormDatas.personalData.RequestorGender]||[[NSString stringWithFormat:@"%@",self.FormDatas.personalData.RequestorGender]isEqualToString:@"0"]) {
+            requestorImage.image=[UIImage imageNamed:@"Message_Man"];
+        }else{
+            requestorImage.image=[UIImage imageNamed:@"Message_Woman"];
+        }
+    }
+    requestorImage.backgroundColor=Color_form_TextFieldBackgroundColor;
+    requestorImage.layer.masksToBounds=YES;
+    requestorImage.layer.cornerRadius = 29.0f;
+    [_View_Requestor addSubview:requestorImage];
+    
+    UILabel *nameLabel = [GPUtils createLable:CGRectMake(88, 10, 150, 60) text:nil font:Font_Important_15_20 textColor:Color_GrayDark_Same_20 textAlignment:NSTextAlignmentLeft];
+    nameLabel.numberOfLines=0;
+    [_View_Requestor addSubview:nameLabel];
+
+    if ([NSString isEqualToNull:self.FormDatas.personalData.Requestor]) {
+        nameLabel.text=self.FormDatas.personalData.Requestor;
+    }
+    
+    CGSize size = [NSString sizeWithText:[NSString stringWithFormat:@"%@%@",Custing(@"   单号:", nil),self.FormDatas.str_SerialNo] font:Font_Important_15_20 maxSize:CGSizeMake(MAXFLOAT, 20)];
+    
+    UILabel *numberTitle=[GPUtils createLable:CGRectMake(Main_Screen_Width-size.width-10,25,size.width+20, 25) text:Custing(@"   单号:", nil) font:Font_Important_15_20 textColor:Color_GrayDark_Same_20 textAlignment:NSTextAlignmentLeft];
+    if ([NSString isEqualToNull:self.FormDatas.str_SerialNo]) {
+        numberTitle.text=[NSString stringWithFormat:@"%@%@",Custing(@"   单号:", nil),self.FormDatas.str_SerialNo];
+    }
+    numberTitle.layer.cornerRadius = 12.5;
+    numberTitle.layer.masksToBounds = YES;
+    numberTitle.layer.borderWidth = 0.5;
+    numberTitle.layer.borderColor = Color_GrayDark_Same_20.CGColor;
+    [_View_Requestor addSubview:numberTitle];
+    [_View_Requestor addSubview:[XBHepler creation_State_Lab:self.FormDatas.str_noteStatus]];
+}
+//MARK:更新报销金额
+-(void)updateApplyAmountViewWithModel:(MyProcurementModel *)model{
+    __weak typeof(self) weakSelf = self;
+    [_View_ApplyAmount addSubview:[XBHepler creation_Lable:[UILabel new] model:model Y:0 IsAmount:1 block:^(NSInteger height) {
+        [weakSelf.View_ApplyAmount updateConstraints:^(MASConstraintMaker *make) {
+            make.height.equalTo(height);
+        }];
+    }]];
+}
+//MARK:更新报销金额大写
+-(void)updateCapitalizedAmountViewWithModel:(MyProcurementModel *)model{
+    __weak typeof(self) weakSelf = self;
+    [_View_Capitalized addSubview:[XBHepler creation_Lable:[UILabel new] model:model Y:0 block:^(NSInteger height) {
+        [weakSelf.View_Capitalized updateConstraints:^(MASConstraintMaker *make) {
+            make.height.equalTo(height);
+        }];
+    }]];
+}
+//MARK:更新减借款
+-(void)updateLoanAmountViewWithModel:(MyProcurementModel *)model{
+    __weak typeof(self) weakSelf = self;
+    [_View_LoanAmount addSubview:[XBHepler creation_Lable:[UILabel new] model:model Y:0 IsAmount:1 block:^(NSInteger height) {
+        [weakSelf.View_LoanAmount updateConstraints:^(MASConstraintMaker *make) {
+            make.height.equalTo(height);
+        }];
+    }]];
+}
+//MARK:更新应付金额
+-(void)updateActualAmountViewWithModel:(MyProcurementModel *)model{
+    __weak typeof(self) weakSelf = self;
+
+    [_View_ActualAmount addSubview:[XBHepler creation_Lable:[UILabel new] model:model Y:0 IsAmount:1 block:^(NSInteger height) {
+        [weakSelf.View_ActualAmount updateConstraints:^(MASConstraintMaker *make) {
+            make.height.equalTo(height);
+        }];
+    }]];
+}
+//MARK:更新无发票金额
+-(void)updateNoInvAmountViewWithModel:(MyProcurementModel *)model{
+    __weak typeof(self) weakSelf = self;
+
+    [_View_NoInvoice addSubview:[XBHepler creation_Lable:[UILabel new] model:model Y:0 IsAmount:1 block:^(NSInteger height) {
+        [weakSelf.View_NoInvoice updateConstraints:^(MASConstraintMaker *make) {
+            make.height.equalTo(height);
+        }];
+    }]];
+}
+//MARK:更新报销明细
+-(void)updateCustomTableView{
+    NSInteger height=0;
+    if (self.FormDatas.arr_sonItem.count<=4||self.FormDatas.bool_isOpenDetail) {
+        for (HasSubmitDetailModel *model in self.FormDatas.arr_sonItem) {
+            height+=[travelHasSubmitCell cellHeightWithObj:model];
+        }
+        [_View_CustomTable updateConstraints:^(MASConstraintMaker *make) {
+            make.height.equalTo(@(30+height));
+        }];
+    }else{
+        for (int i=0; i<4; i++) {
+            HasSubmitDetailModel *model=self.FormDatas.arr_sonItem[i];
+            height+=[travelHasSubmitCell cellHeightWithObj:model];
+        }
+        [_View_CustomTable updateConstraints:^(MASConstraintMaker *make) {
+            make.height.equalTo(@(height+30));
+        }];
+    }
+    [_View_CustomTable reloadData];
+}
+
+//MARK:更新收款人
+-(void)updatePayeeTable{
+    if (self.FormDatas.bool_ThirisOpenDetail) {
+        NSInteger height=10;
+        for (PayeeDetails *model in self.FormDatas.arr_ThirDetailsDataArray) {
+            height=height+[ProcureDetailsCell PayeeDetailCellHeightWithArray:self.FormDatas.arr_ThirDetailsArray WithModel:model];
+        }
+        [_View_PayeeTable updateConstraints:^(MASConstraintMaker *make) {
+            make.height.equalTo(@(height));
+        }];
+    }else{
+        PayeeDetails *model=self.FormDatas.arr_ThirDetailsDataArray[0];
+        NSInteger height=10+[ProcureDetailsCell PayeeDetailCellHeightWithArray:self.FormDatas.arr_ThirDetailsArray WithModel:model];
+        [_View_PayeeTable updateConstraints:^(MASConstraintMaker *make) {
+            make.height.equalTo(@(height));
+        }];
+    }
+}
+
+//MARK:更新分摊明细
+-(void)updateReimShareViewWithType:(NSInteger)type{
+    if (type == 1) {
+        [_ReimShareMainView updateReimShareMainViewWith:self.FormDatas.arr_ShareForm WithData:self.FormDatas.arr_ShareData WithEditType:2 WithComePlace:3];
+    }else{
+        [_ReimShareDeptSumView updateBaseFormSumViewWithData:self.FormDatas WithType:3];
+    }
+}
+-(void)updateClaimTypeViewWithModel:(MyProcurementModel *)model{
+    __weak typeof(self) weakSelf = self;
+
+    [_View_ClaimType addSubview:[XBHepler creation_Lable:[UILabel new] model:model Y:0 block:^(NSInteger height) {
+        [weakSelf.View_ClaimType updateConstraints:^(MASConstraintMaker *make) {
+            make.height.equalTo(height);
+        }];
+    }]];
+}
+//MARK:更新报销事由
+-(void)updateReasonViewWithModel:(MyProcurementModel *)model{
+    __weak typeof(self) weakSelf = self;
+
+    [_View_Reason addSubview:[XBHepler creation_Lable:[UILabel new] model:model Y:0 block:^(NSInteger height) {
+        [weakSelf.View_Reason updateConstraints:^(MASConstraintMaker *make) {
+            make.height.equalTo(height);
+        }];
+    }]];
+}
+//MARK:更新受益人
+-(void)updateBeneficiariesViewWithModel:(MyProcurementModel *)model{
+    model.fieldValue=[NSString isEqualToNull:self.FormDatas.str_Beneficiaries]?[NSString stringWithFormat:@"%@",self.FormDatas.str_Beneficiaries]:@"";
+    __weak typeof(self) weakSelf = self;
+
+    [_View_Beneficiaries addSubview:[XBHepler creation_Lable:[UILabel new] model:model Y:0 block:^(NSInteger height) {
+        [weakSelf.View_Beneficiaries updateConstraints:^(MASConstraintMaker *make) {
+            make.height.equalTo(height);
+        }];
+    }]];
+}
+//MARK:更新项目名称
+-(void)updateProjectViewWithModel:(MyProcurementModel *)model{
+    model.fieldValue = [NSString isEqualToNull:self.FormDatas.personalData.ProjName]?[NSString stringWithFormat:@"%@",self.FormDatas.personalData.ProjName]:@"";
+    __weak typeof(self) weakSelf = self;
+    [_View_Project addSubview:[XBHepler creation_Lable:[UILabel new] model:model Y:0 block:^(NSInteger height) {
+        [weakSelf.View_Project updateConstraints:^(MASConstraintMaker *make) {
+            make.height.equalTo(height);
+        }];
+    }]];
+}
+//MARK:更新客户名称
+-(void)updateClientViewWithModel:(MyProcurementModel *)model{
+    model.fieldValue = [NSString isEqualToNull:self.FormDatas.personalData.ClientName]?[NSString stringWithFormat:@"%@",self.FormDatas.personalData.ClientName]:@"";
+    __weak typeof(self) weakSelf = self;
+    [_View_Client addSubview:[XBHepler creation_Lable:[UILabel new] model:model Y:0 block:^(NSInteger height) {
+        [weakSelf.View_Client updateConstraints:^(MASConstraintMaker *make) {
+            make.height.equalTo(height);
+        }];
+    }]];
+}
+//MARK:更新供应商名称
+-(void)updateSupplierViewWithModel:(MyProcurementModel *)model{
+    model.fieldValue = [NSString isEqualToNull:self.FormDatas.personalData.SupplierName]?[NSString stringWithFormat:@"%@",self.FormDatas.personalData.SupplierName]:@"";
+    __weak typeof(self) weakSelf = self;
+    [_View_Supplier addSubview:[XBHepler creation_Lable:[UILabel new] model:model Y:0 block:^(NSInteger height) {
+        [weakSelf.View_Supplier updateConstraints:^(MASConstraintMaker *make) {
+            make.height.equalTo(height);
+        }];
+    }]];
+}
+
+//MARK:更新业务招待单
+-(void)updateEntertainAppViewWithModel:(MyProcurementModel *)model{
+    NSDictionary *dict = @{@"Id":[NSString stringWithIdOnNO:self.FormDatas.str_EntertainNumber],
+                           @"Value":[NSString stringWithIdOnNO:self.FormDatas.str_EntertainInfo],
+                           @"Model":model
+                           };
+    [_View_EntertainApp updateView:dict];
+    __weak typeof(self) weakSelf = self;
+    _View_EntertainApp.CellClickBlock = ^(NSDictionary *dict, NSInteger status) {
+        [weakSelf LookViewLinkToFormWithTaskId:dict[@"taskId"] WithFlowCode:dict[@"flowcode"]];
+    };
+}
+
+//MARK:更新车辆维修单
+-(void)updateVehicleSvcAppViewWithModel:(MyProcurementModel *)model{
+    NSDictionary *dict = @{@"Id":[NSString stringWithIdOnNO:self.FormDatas.str_VehicleSvcNumber],
+                           @"Value":[NSString stringWithIdOnNO:self.FormDatas.str_VehicleSvcInfo],
+                           @"Model":model
+                           };
+    [_View_VehicleSvcApp updateView:dict];
+    __weak typeof(self) weakSelf = self;
+    _View_VehicleSvcApp.CellClickBlock = ^(NSDictionary *dict, NSInteger status) {
+        [weakSelf LookViewLinkToFormWithTaskId:dict[@"taskId"] WithFlowCode:dict[@"flowcode"]];
+    };
+}
+
+//MARK:更新费用申请单请单
+-(void)updateFeeAppFormViewWithModel:(MyProcurementModel *)model{
+    NSDictionary *dict = @{@"Id":[NSString stringWithIdOnNO:self.FormDatas.str_FeeAppNumber],
+                           @"Value":[NSString stringWithIdOnNO:self.FormDatas.str_FeeAppInfo],
+                           @"Model":model
+                           };
+    [_View_FeeAppForm updateView:dict];
+    __weak typeof(self) weakSelf = self;
+    _View_FeeAppForm.CellClickBlock = ^(NSDictionary *dict, NSInteger status) {
+        [weakSelf LookViewLinkToFormWithTaskId:dict[@"taskId"] WithFlowCode:dict[@"flowcode"]];
+    };
+}
+//MARK:更新预估金额视图
+-(void)updateEstimatedViewWithModel:(MyProcurementModel *)model{
+    __weak typeof(self) weakSelf = self;
+
+    [_View_Estimated addSubview:[XBHepler creation_Lable:[UILabel new] model:model Y:0 IsAmount:1 block:^(NSInteger height) {
+        [weakSelf.View_Estimated updateConstraints:^(MASConstraintMaker *make) {
+            make.height.equalTo(height);
+        }];
+    }]];
+}
+//MARK:更新超预算原因单视图
+-(void)updateOverBudViewWithModel:(MyProcurementModel *)model{
+    __weak typeof(self) weakSelf = self;
+    [_View_OverBud addSubview:[XBHepler creation_Lable:[UILabel new] model:model Y:0 block:^(NSInteger height) {
+        [weakSelf.View_OverBud updateConstraints:^(MASConstraintMaker *make) {
+            make.height.equalTo(height);
+        }];
+    }]];
+}
+//MARK:更新外出单请单
+-(void)updateStaffOutNumberViewWithModel:(MyProcurementModel *)model{
+    NSDictionary *dict = @{@"Id":[NSString stringWithIdOnNO:self.FormDatas.str_StaffOutNumber],
+                           @"Value":[NSString stringWithIdOnNO:self.FormDatas.str_StaffOutInfo],
+                           @"Model":model
+                           };
+    [_View_StaffOutForm updateView:dict];
+    __weak typeof(self) weakSelf = self;
+    _View_StaffOutForm.CellClickBlock = ^(NSDictionary *dict, NSInteger status) {
+        [weakSelf LookViewLinkToFormWithTaskId:dict[@"taskId"] WithFlowCode:dict[@"flowcode"]];
+    };
+}
+//MARK:更新采购单请单
+-(void)updatePurchaseNumberViewWithModel:(MyProcurementModel *)model{
+    NSDictionary *dict = @{@"Id":[NSString stringWithIdOnNO:self.FormDatas.str_PurchaseNumber],
+                           @"Value":[NSString stringWithIdOnNO:self.FormDatas.str_PurchaseInfo],
+                           @"Model":model
+                           };
+    [_View_PurchaseForm updateView:dict];
+    __weak typeof(self) weakSelf = self;
+    _View_PurchaseForm.CellClickBlock = ^(NSDictionary *dict, NSInteger status) {
+        [weakSelf LookViewLinkToFormWithTaskId:dict[@"taskId"] WithFlowCode:dict[@"flowcode"]];
+    };
+}
+//MARK:更新特殊事项申请单视图
+-(void)updateSpecialRequirementsNumberViewWithModel:(MyProcurementModel *)model{
+    NSDictionary *dict = @{@"Id":[NSString stringWithIdOnNO:self.FormDatas.str_SpecialReqestNumber],
+                           @"Value":[NSString stringWithIdOnNO:self.FormDatas.str_SpecialReqestInfo],
+                           @"Model":model
+                           };
+    [_View_SpecialReqest updateView:dict];
+    __weak typeof(self) weakSelf = self;
+    _View_SpecialReqest.CellClickBlock = ^(NSDictionary *dict, NSInteger status) {
+        [weakSelf LookViewLinkToFormWithTaskId:dict[@"taskId"] WithFlowCode:dict[@"flowcode"]];
+    };
+}
+//MARK:更新员工外出培训申请单视图
+-(void)updateEmployeeTrainingNumberViewWithModel:(MyProcurementModel *)model{
+    NSDictionary *dict = @{@"Id":[NSString stringWithIdOnNO:self.FormDatas.str_EmployeeTrainNumber],
+                           @"Value":[NSString stringWithIdOnNO:self.FormDatas.str_EmployeeTrainInfo],
+                           @"Model":model
+                           };
+    [_View_EmployeeTrain updateView:dict];
+    __weak typeof(self) weakSelf = self;
+    _View_EmployeeTrain.CellClickBlock = ^(NSDictionary *dict, NSInteger status) {
+        [weakSelf LookViewLinkToFormWithTaskId:dict[@"taskId"] WithFlowCode:dict[@"flowcode"]];
+    };
+}
+//MARK:更新借款单请单
+-(void)updateBorrowFormViewWithModel:(MyProcurementModel *)model{
+    NSDictionary *dict = @{@"Id":[NSString stringWithIdOnNO:self.FormDatas.str_AdvanceId],
+                           @"Value":[NSString stringWithIdOnNO:self.FormDatas.str_AdvanceInfo],
+                           @"Model":model
+                           };
+    [_View_BorrowForm updateView:dict];
+    __weak typeof(self) weakSelf = self;
+    _View_BorrowForm.CellClickBlock = ^(NSDictionary *dict, NSInteger status) {
+        [weakSelf LookViewLinkToFormWithTaskId:dict[@"taskId"] WithFlowCode:dict[@"flowcode"]];
+    };
+}
+//MARK:更新单据数量
+-(void)updateDocumentNumViewWithModel:(MyProcurementModel *)model{
+    __weak typeof(self) weakSelf = self;
+    [_View_DocumentNum addSubview:[XBHepler creation_Lable:[UILabel new] model:model Y:0 block:^(NSInteger height) {
+        [weakSelf.View_DocumentNum updateConstraints:^(MASConstraintMaker *make) {
+            make.height.equalTo(height);
+        }];
+    }]];
+}
+//MARK:更新收款人
+-(void)updatePayeeViewWithModel:(MyProcurementModel *)model{
+    __weak typeof(self) weakSelf = self;
+    [_View_Payee addSubview:[XBHepler creation_Lable:[UILabel new] model:model Y:0 block:^(NSInteger height) {
+        [weakSelf.View_Payee updateConstraints:^(MASConstraintMaker *make) {
+            make.height.equalTo(height);
+        }];
+    }]];
+}
+
+//MARK:更新银行账号
+-(void)updateBankAccountViewWithModel:(MyProcurementModel *)model{
+    model.fieldValue = [NSString getSecretBankAccount:model.fieldValue];
+    __weak typeof(self) weakSelf = self;
+    [_View_BankAccount addSubview:[XBHepler creation_Lable:[UILabel new] model:model Y:0 block:^(NSInteger height) {
+        [weakSelf.View_BankAccount updateConstraints:^(MASConstraintMaker *make) {
+            make.height.equalTo(height);
+        }];
+    }]];
+}
+//MARK:更新开户行网点
+-(void)updateBankOutletsViewWithModel:(MyProcurementModel *)model{
+    [_View_BankOutlets addSubview:[XBHepler creation_Lable:[UILabel new] model:model Y:0 block:^(NSInteger height) {
+        [self.View_BankOutlets updateConstraints:^(MASConstraintMaker *make) {
+            make.height.equalTo(height);
+        }];
+    }]];
+    
+}
+//MARK:更新开户行
+-(void)updateBankNameViewWithModel:(MyProcurementModel *)model{
+    [_View_BankName addSubview:[XBHepler creation_Lable:[UILabel new] model:model Y:0 block:^(NSInteger height) {
+        [self.View_BankName updateConstraints:^(MASConstraintMaker *make) {
+            make.height.equalTo(height);
+        }];
+    }]];
+}
+//MARK:更新开户行城市
+-(void)updateBankCityViewWithModel:(MyProcurementModel *)model{
+    model.fieldValue = [GPUtils getSelectResultWithArray:@[self.FormDatas.str_BankProvince,self.FormDatas.str_BankCity] WithCompare:@"/"];
+    [_View_BankCity addSubview:[XBHepler creation_Lable:[UILabel new] model:model Y:0 block:^(NSInteger height) {
+        [self.View_BankCity updateConstraints:^(MASConstraintMaker *make) {
+            make.height.equalTo(height);
+        }];
+    }]];
+}
+//MARK:更新结算方式
+-(void)updatePmtMethodViewWithModel:(MyProcurementModel *)model{
+    __weak typeof(self) weakSelf = self;
+    [_View_PmtMethod addSubview:[XBHepler creation_Lable:[UILabel new] model:model Y:0 block:^(NSInteger height) {
+        [weakSelf.View_PmtMethod updateConstraints:^(MASConstraintMaker *make) {
+            make.height.equalTo(height);
+        }];
+    }]];
+}
+//MARK:更新是否收发票
+-(void)updateReceiptOfInvViewWithModel:(MyProcurementModel *)model{
+    if ([[NSString stringWithFormat:@"%@",model.fieldValue]isEqualToString:@"0"]) {
+        self.FormDatas.str_ReceiptOfInv=@"0";
+        model.fieldValue=Custing(@"未收到", nil);
+    }else{
+        self.FormDatas.str_ReceiptOfInv=@"1";
+        model.fieldValue=Custing(@"收到", nil);
+    }
+    _Lab_ReceiptOfInv =[[UILabel alloc]init];
+    __weak typeof(self) weakSelf = self;
+    [_View_ReceiptOfInv addSubview:[XBHepler creation_Lable:_Lab_ReceiptOfInv model:model Y:0 block:^(NSInteger height) {
+        [self.View_ReceiptOfInv updateConstraints:^(MASConstraintMaker *make) {
+            make.height.equalTo(height);
+        }];
+    }]];
+    if (self.FormDatas.bool_ReceiptOfInv) {
+        UIImageView *img_des=[[UIImageView alloc]init];
+        img_des.image=[UIImage imageNamed:@"skipImage"];
+        [_View_ReceiptOfInv addSubview:img_des];
+        [img_des makeConstraints:^(MASConstraintMaker *make) {
+            make.right.equalTo(self.View_ReceiptOfInv.right).offset(@-12);
+            make.size.equalTo(CGSizeMake(20, 20));
+            make.centerY.equalTo(self.View_ReceiptOfInv.centerY);
+        }];
+//        _Lab_ReceiptOfInv.textColor=Color_Blue_Important_20;
+        _Lab_ReceiptOfInv.userInteractionEnabled=YES;
+        [_Lab_ReceiptOfInv bk_whenTapped:^{
+            [weakSelf changeReceiptOfInv];
+        }];
+    }
+}
+//MARK:更新采购自定义字段
+-(void)updateReservedViewWithModel:(MyProcurementModel *)model{
+    __weak typeof(self) weakSelf = self;
+    [_View_Reserved addSubview:[ReserverdLookMainView initArr:self.FormDatas.arr_FormMainArray view:_View_Reserved block:^(NSInteger height) {
+        [weakSelf.View_Reserved updateConstraints:^(MASConstraintMaker *make) {
+            make.height.equalTo(height);
+        }];
+    }]];
+}
+//MARK:更新采购备注
+-(void)updateRemarkViewWithModel:(MyProcurementModel *)model{
+    __weak typeof(self) weakSelf = self;
+    [_View_Remark addSubview:[XBHepler creation_Lable:[UILabel new] model:model Y:0 block:^(NSInteger height) {
+        [weakSelf.View_Remark updateConstraints:^(MASConstraintMaker *make) {
+            make.height.equalTo(height);
+        }];
+    }]];
+}
+//MARK:更新抄送人
+-(void)updateCcPeopleViewWithModel:(MyProcurementModel *)model{
+    __weak typeof(self) weakSelf = self;
+    [_View_CcToPeople addSubview:[XBHepler creation_Lable:[UILabel new] model:model Y:0 block:^(NSInteger height) {
+        [weakSelf.View_CcToPeople updateConstraints:^(MASConstraintMaker *make) {
+            make.height.equalTo(height);
+        }];
+    }]];
+}
+//MARK:更新采购图片
+-(void)updateAttachImgViewWithModel:(MyProcurementModel *)model{
+  
+    EditAndLookImgView *view=[[EditAndLookImgView alloc]initWithBaseView:_View_AttachImg withEditStatus:2 withModel:model];
+    view.maxCount=5;
+    [_View_AttachImg addSubview:view];
+    [view updateWithTotalArray:self.FormDatas.arr_totalFileArray WithImgArray:self.FormDatas.arr_imagesArray];
+}
+
+//MARK:超预算记录
+-(void)updateBudgetNote{
+    SubmitFormView *view=[[SubmitFormView alloc]initBaseView:_View_Budget WithContent:nil WithFormType:formViewOnlySelect WithSegmentType:lineViewNoneLine WithString:Custing(@"查看预算详情", nil) WithTips:nil  WithInfodict:nil];
+    view.lab_title.textColor=Color_Orange_Weak_20;
+    __weak typeof(self) weakSelf = self;
+    [view setFormClickedBlock:^(MyProcurementModel *model){
+        [weakSelf Budget:nil];
+    }];
+    [_View_Budget addSubview:view];
+}
+//MARK:更新报销审批人
+-(void)updateApproveViewWithModel:(MyProcurementModel *)model{
+    model.Description=Custing(@"审批人", nil);
+    model.fieldValue=@"";
+    _txf_Approver=[[UITextField alloc]init];
+    SubmitFormView *view=[[SubmitFormView alloc]initBaseView:_View_Approve WithContent:_txf_Approver WithFormType:formViewShowAppover WithSegmentType:lineViewNoneLine Withmodel:model WithInfodict:nil];
+    __weak typeof(self) weakSelf = self;
+    [view setApproverClickedBlock:^(MyProcurementModel *model, UIImageView *image){
+        weakSelf.View_ApproveImg=image;
+        [self SecondApproveClick];
+    }];
+    [_View_Approve addSubview:view];
+}
+//MARK:审批记录
+-(void)updateNotesTableView{
+    __weak typeof(self) weakSelf = self;
+    [_View_Note addSubview:[[FlowChartView alloc] init:self.FormDatas.arr_noteDateArray Y:10 HeightBlock:^(NSInteger height) {
+        [weakSelf.View_Note addSubview:[weakSelf createLineView]];
+        [weakSelf.View_Note updateConstraints:^(MASConstraintMaker *make) {
+            make.height.equalTo(height+10+15);
+        }];
+    } BtnBlock:^{
+        [weakSelf goTo_Webview];
+    }]];
+}
+//MARK:更新底层视图
+-(void)updateBottomView{
+    if (_int_RequestorLine==1) {
+        [_View_Requestor addSubview:[self createLineViewOfHeight_ByTitle:79.5]];
+    }
+    if (_int_line1==1) {
+        [_view_line1 updateConstraints:^(MASConstraintMaker *make) {
+            make.height.equalTo(@10);
+        }];
+    }
+    if (_int_line2==1) {
+        [_view_line2 updateConstraints:^(MASConstraintMaker *make) {
+            make.height.equalTo(@10);
+        }];
+    }
+    if (_int_line3==1) {
+        [_view_line3 updateConstraints:^(MASConstraintMaker *make) {
+            make.height.equalTo(@10);
+        }];
+    }
+  
+    [self.contentView updateConstraints:^(MASConstraintMaker *make) {
+        make.bottom.equalTo(self.View_Note.bottom).offset(10);
+    }];
+}
+//MARK:审批人点击
+-(void)SecondApproveClick{
+    NSMutableArray *array = [NSMutableArray array];
+    NSArray *idarr = [self.FormDatas.str_twoHandeId componentsSeparatedByString:@","];
+    for (int i = 0 ; i<idarr.count ; i++) {
+        NSDictionary *dic = @{@"requestorUserId":idarr[i]};
+        [array addObject:dic];
+    }
+    contactsVController *contactVC=[[contactsVController alloc]init];
+    contactVC.status = @"1";
+    contactVC.Radio = @"1";
+    contactVC.arrClickPeople = array;
+    contactVC.itemType = 99;
+    contactVC.menutype=4;
+    contactVC.universalDelegate = self;
+    __weak typeof(self) weakSelf = self;
+    [contactVC setBlock:^(NSMutableArray *array) {
+        buildCellInfo *bul = array.lastObject;
+        self.FormDatas.str_twoApprovalName = bul.requestor;
+        self.FormDatas.str_twoHandeId=[NSString stringWithFormat:@"%ld",(long)bul.requestorUserId];
+        weakSelf.txf_Approver.text= bul.requestor;
+        if ([NSString isEqualToNull:bul.photoGraph]) {
+            NSDictionary * dic = (NSDictionary *)[NSString transformToObj:bul.photoGraph];
+            if ([NSString isEqualToNull:[dic objectForKey:@"filepath"]]) {
+                [weakSelf.View_ApproveImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",[dic objectForKey:@"filepath"]]]];
+            }
+        }else{
+            if ([[NSString stringWithFormat:@"%d",bul.gender] isEqualToString:@"0"]) {
+                weakSelf.View_ApproveImg.image=[UIImage imageNamed:@"Message_Man"];
+            }else{
+                weakSelf.View_ApproveImg.image=[UIImage imageNamed:@"Message_Woman"];
+            }
+        }
+    }];
+    [self.navigationController pushViewController:contactVC animated:YES];
+}
+
+//0:退单 1加签 2同意
+-(void)dockViewClick:(NSInteger)type{
+    if ((type==2||type==3)&&self.FormDatas.bool_needSure) {
+        for (HasSubmitDetailModel *model in self.FormDatas.arr_sonItem) {
+            if ([model.hasSured isEqualToString:@"0"]) {
+                [[GPAlertView sharedAlertView]showAlertText:self WithText:Custing(@"请确认超标费用明细", nil) duration:1.0];
+                return;
+            }
+        }
+    }
+    if (type==2) {
+       self.FormDatas.int_SubmitSaveType=1;
+        self.dockView.userInteractionEnabled=NO;
+       [self requestGetApproval];
+    }else if (type==3){
+        if ([self.userdatas.isOnlinePay isEqualToString:@"1"]) {
+            [self batchPay];
+        }else{
+            self.FormDatas.int_SubmitSaveType=2;
+            self.dockView.userInteractionEnabled=NO;
+            [self requestGetApproval];
+        }
+    }else{
+        examineViewController *vc=[[examineViewController alloc]init];
+        vc.ProcId=self.FormDatas.str_procId;
+        vc.TaskId=self.FormDatas.str_taskId;
+        vc.FlowCode=self.FormDatas.str_flowCode;
+        if (type==0) {
+            vc.Type=@"0";
+            vc.AdvanceNumber=self.FormDatas.str_AdvanceId;
+            vc.FeeAppNumber=self.FormDatas.str_FeeAppNumber;
+            vc.str_CommonField=[self.FormDatas getCommonField];
+        }else if (type==1){
+            vc.Type=@"1";
+        }
+        [self.navigationController pushViewController:vc animated:YES];
+    }
+}
+-(void)AgreeWithPay{
+    self.dockView.userInteractionEnabled=YES;
+    if (self.FormDatas.int_SubmitSaveType==1) {
+        examineViewController *vc = [[examineViewController alloc]init];
+        vc.ProcId=self.FormDatas.str_procId;
+        vc.TaskId=self.FormDatas.str_taskId;
+        vc.FlowCode=self.FormDatas.str_flowCode;
+        vc.Type = @"2";
+        [self.FormDatas contectHasDataWithTableName:[self.FormDatas getTableName]];
+        vc.dic_APPROVAL = self.FormDatas.dict_parametersDict;
+        vc.AdvanceNumber=self.FormDatas.str_AdvanceId;
+        vc.FeeAppNumber=self.FormDatas.str_FeeAppNumber;
+        vc.str_CommonField=[self.FormDatas getCommonField];
+        [self.navigationController pushViewController:vc animated:YES];
+    }else if (self.FormDatas.int_SubmitSaveType==2){
+        [YXSpritesLoadingView showWithText:Custing(@"光速加载中...",nil) andShimmering:NO andBlurEffect:NO];
+        NSLog(@"确认支付");
+        self.dockView.userInteractionEnabled=NO;
+        [self.FormDatas contectHasPayDataWithTableName:[self.FormDatas getTableName]];
+        [[GPClient shareGPClient]REquestByPostWithPath:[self.FormDatas getSinglePayUrl] Parameters:[self.FormDatas SinglePayFormWithComment:@"" WithAdvanceNumber:self.FormDatas.str_AdvanceId WithExpIds:@"" WithMainForm:nil WithCommonField:@""] Delegate:self SerialNum:1 IfUserCache:NO];
+    }
+}
+-(void)batchPay{
+    PayMentDetailController *batch=[[PayMentDetailController alloc]init];
+    MyApplyModel *model=[[MyApplyModel alloc]init];
+    model.taskId=self.FormDatas.str_taskId;
+    model.procId=self.FormDatas.str_procId;
+    batch.batchPayArray=[NSMutableArray arrayWithObject:model];
+    [self.navigationController pushViewController:batch animated:YES];
+}
+//MARK:撤回操作
+-(void)reCallBack{
+    NSLog(@"撤回操作");
+    self.dockView.userInteractionEnabled=NO;
+    [[GPClient shareGPClient]REquestByPostWithPath:[self.FormDatas reCallUrl] Parameters:[self.FormDatas reCallParameters] Delegate:self SerialNum:2 IfUserCache:NO];
+}
+//MARK:催办操作
+-(void)goUrge{
+    NSLog(@"催办操作");
+    self.dockView.userInteractionEnabled=NO;
+    [[GPClient shareGPClient]REquestByPostWithPath:[self.FormDatas urgeUrl] Parameters:[self.FormDatas urgeParameters] Delegate:self SerialNum:1 IfUserCache:NO];
+}
+//MARK:-tableView代理方法
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    if (tableView == _View_CustomTable) {
+        return self.FormDatas.arr_sonItem.count;
+    }else if (tableView==_View_PayeeTable){
+        return self.FormDatas.arr_ThirDetailsDataArray.count;
+    }
+    return 0;
+}
+
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    if (tableView == _View_CustomTable) {
+        HasSubmitDetailModel *model=self.FormDatas.arr_sonItem[indexPath.row];
+        return [travelHasSubmitCell cellHeightWithObj:model];
+    }else if (tableView==_View_PayeeTable){
+        PayeeDetails *model=self.FormDatas.arr_ThirDetailsDataArray[indexPath.row];
+        return [ProcureDetailsCell PayeeDetailCellHeightWithArray:self.FormDatas.arr_ThirDetailsArray WithModel:model];
+    }
+    return 0;
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
+    if (tableView == _View_CustomTable) {
+        return 30;
+    }else if (tableView ==_View_PayeeTable){
+        return 10;
+    }
+    return 0.01;
+}
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
+    if (tableView == _View_CustomTable) {
+        
+        UIView *view=[[UIView alloc]initWithFrame:CGRectMake(0, 0, Main_Screen_Width, 30)];
+        UILabel *title=[GPUtils createLable:CGRectMake(12,0,180,30) text:Custing(@"报销明细", nil) font:Font_Important_15_20 textColor:Color_GrayDark_Same_20 textAlignment:NSTextAlignmentLeft];
+        if (self.FormDatas.arr_sonItem.count>1) {
+            title.text=[NSString stringWithFormat:@"%@  (%ld)",Custing(@"报销明细", nil),self.FormDatas.arr_sonItem.count];
+        }
+        [view addSubview:title];
+        if (![self.FormDatas.arr_sonItem isKindOfClass:[NSNull class]]&&self.FormDatas.arr_sonItem.count>4) {
+            CGSize size = [(self.FormDatas.bool_isOpenDetail?Custing(@"收起", nil):Custing(@"展开", nil)) sizeCalculateWithFont:Font_Important_15_20 constrainedToSize:CGSizeMake(Main_Screen_Width, 30) lineBreakMode:NSLineBreakByCharWrapping];
+            CGFloat titleWidth=size.width;
+            CGFloat imageWidth = 14;
+            CGFloat btnWidth = titleWidth +imageWidth+24;
+            UIButton *btn=[GPUtils createButton:CGRectMake(Main_Screen_Width-btnWidth, 0, btnWidth, 30) action:@selector(LookMore:) delegate:self title:self.FormDatas.bool_isOpenDetail?Custing(@"收起", nil):Custing(@"展开", nil) font:Font_Important_15_20 titleColor:Color_Blue_Important_20];
+            btn.titleEdgeInsets = UIEdgeInsetsMake(0, -imageWidth, 0, imageWidth);
+            btn.imageEdgeInsets = UIEdgeInsetsMake(0, titleWidth, 0, -titleWidth);
+            [btn setImage:[UIImage imageNamed:self.FormDatas.bool_isOpenDetail?@"work_Close":@"work_Open"] forState:UIControlStateNormal];
+            [view addSubview:btn];
+        }
+        return view;
+    }else if (tableView ==_View_PayeeTable){
+        if (section==0) {
+            UIView *view=[[UIView alloc]initWithFrame:CGRectMake(0, 0, Main_Screen_Width, 10)];
+            view.backgroundColor=Color_White_Same_20;
+            return view;
+        }
+    }
+    return [UIView new];
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
+    return 0.01;
+}
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section{
+    UIView *view=[[UIView alloc]initWithFrame:CGRectMake(0, 0, Main_Screen_Width, 0.01)];
+    return view;
+}
+-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    if (tableView == _View_CustomTable) {
+        travelHasSubmitCell *cell=[tableView dequeueReusableCellWithIdentifier:@"travelHasSubmitCell"];
+        if (cell==nil) {
+            cell=[[travelHasSubmitCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"travelHasSubmitCell"];
+        }
+        [cell configViewWithArray:self.FormDatas.arr_sonItem withIndex:indexPath.row withNeedSure:self.FormDatas.bool_needSure withComePlace:@"other"];
+        if (cell.btn_Sure) {
+            [cell.btn_Sure addTarget:self action:@selector(SureClick:) forControlEvents:UIControlEventTouchUpInside];
+            cell.btn_Sure.tag=200+indexPath.row;
+        }
+        return cell;
+    }else if (tableView ==_View_PayeeTable){
+        ProcureDetailsCell *cell=[tableView dequeueReusableCellWithIdentifier:@"ProcureDetailsCell"];
+        if (cell==nil) {
+            cell=[[ProcureDetailsCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"ProcureDetailsCell"];
+        }
+        [cell configPayeeDetailCellWithArray:self.FormDatas.arr_ThirDetailsArray withDetailsModel:self.FormDatas.arr_ThirDetailsDataArray[indexPath.row] withindex:indexPath.row withCount:self.FormDatas.arr_ThirDetailsDataArray.count] ;
+        if (cell.LookMore) {
+            [cell.LookMore addTarget:self action:@selector(ThirLookMore:) forControlEvents:UIControlEventTouchUpInside];
+        }
+        return cell;
+    }
+    return  [UITableViewCell new];
+}
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    if (tableView == _View_CustomTable) {
+        HasSubmitDetailModel *model=(HasSubmitDetailModel*)self.FormDatas.arr_sonItem[indexPath.row];
+        NewLookAddCostViewController *add = [[NewLookAddCostViewController alloc]init];
+        add.dict_parameter = @{@"UserId":self.FormDatas.personalData.OperatorUserId,
+                               @"OwnerUserId":self.FormDatas.personalData.OperatorUserId,
+                               @"ProcId":self.FormDatas.str_procId,
+                               @"FlowGuid":self.FormDatas.str_flowGuid,
+                               @"Requestor":self.FormDatas.personalData.Requestor,
+                               };
+        add.TaskId = model.taskId;
+        add.Type = 3;
+        add.Action = 3;
+        add.GridOrder = model.gridOrder;
+        add.dateSource = model.dataSource;
+        add.model_has = model;
+        [self.navigationController pushViewController:add animated:YES];
+    }
+}
+//MARK:查看更多明细
+-(void)LookMore:(UIButton *)btn{
+    self.FormDatas.bool_isOpenDetail=!self.FormDatas.bool_isOpenDetail;
+    [self updateCustomTableView];
+}
+-(void)Budget:(UIButton *)btn{
+    BudgetInfoController *vc=[[BudgetInfoController alloc]init];
+    vc.budgetInfoDict=self.FormDatas.dict_budgetInfo;
+    [self.navigationController pushViewController:vc animated:YES];
+}
+//MARK:明细超标确认
+-(void)SureClick:(UIButton *)btn{
+    HasSubmitDetailModel *model=(HasSubmitDetailModel*)self.FormDatas.arr_sonItem[btn.tag-200];
+    if ([model.hasSured isEqualToString:@"1"]) {
+        model.hasSured=@"0";
+    }else if ([model.hasSured isEqualToString:@"0"]){
+        model.hasSured=@"1";
+    }
+    [_View_CustomTable reloadRowsAtIndexPaths:[NSArray arrayWithObjects:[NSIndexPath indexPathForRow:btn.tag-200 inSection:0], nil] withRowAnimation:UITableViewRowAnimationNone];
+}
+-(void)changeReceiptOfInv{
+    STOnePickView *picker = [[STOnePickView alloc]init];
+    __weak typeof(self) weakSelf = self;
+    [picker setBlock:^(STOnePickModel *Model, NSInteger type) {
+        weakSelf.FormDatas.str_ReceiptOfInv=Model.Id;
+        weakSelf.Lab_ReceiptOfInv.text=Model.Type;
+    }];
+    picker.typeTitle=Custing(@"是否收到发票", nil);
+    picker.DateSourceArray=[NSMutableArray arrayWithArray:self.FormDatas.arr_ReceiptOfInv];
+    STOnePickModel *model=[[STOnePickModel alloc]init];
+    model.Id=[self.FormDatas.str_ReceiptOfInv floatValue]==1?@"1":@"0";
+    picker.Model=model;
+    [picker UpdatePickUI];
+    [picker setContentMode:STPickerContentModeBottom];
+    [picker show];
+}
+
+-(void)ThirLookMore:(UIButton *)btn{
+    self.FormDatas.bool_ThirisOpenDetail=!self.FormDatas.bool_ThirisOpenDetail;
+    [btn setImage: self.FormDatas.bool_ThirisOpenDetail ? [UIImage imageNamed:@"work_Close"]:[UIImage imageNamed:@"work_Open"] forState:UIControlStateNormal];
+    [btn setTitle: self.FormDatas.bool_ThirisOpenDetail ? Custing(@"收起", nil):Custing(@"展开", nil) forState:UIControlStateNormal];
+    [self updatePayeeTable];
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+ #pragma mark - Navigation
+ 
+ // In a storyboard-based application, you will often want to do a little preparation before navigation
+ - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+ // Get the new view controller using [segue destinationViewController].
+ // Pass the selected object to the new view controller.
+ }
+ */
+
+@end

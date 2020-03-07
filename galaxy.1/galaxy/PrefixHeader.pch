@@ -1,0 +1,393 @@
+//
+//  PrefixHeader.pch
+//  galaxy
+//
+//  Created by 赵碚 on 15/7/23.
+//  Copyright (c) 2015年 赵碚. All rights reserved.
+//
+
+
+#ifndef galaxy_PrefixHeader_pch
+#define galaxy_PrefixHeader_pch
+
+#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+#import <QuartzCore/QuartzCore.h>
+#import "Galaxy.h"
+#import "IPConfig.h"
+#import "UrlKeyManager.h"
+//define this constant if you want to use Masonry without the 'mas_' prefix
+#define MAS_SHORTHAND
+//define this constant if you want to enable auto-boxing for default syntax
+#define MAS_SHORTHAND_GLOBALS
+#import "Masonry.h"
+#import "UIImageView+WebCache.h"
+#import "UIImage+Common.h"
+#import "UITextField+XBHelper.h"
+#import "NSObject+BaseSet.h"
+#import "UIView+Common.h"
+#import "UILabel+Common.h"
+#import "Sonic.h"
+#import <AFServiceSDK/AFServiceSDK.h>
+#import <UMCommon/UMCommon.h>
+#import <UMPush/UMessage.h>
+#import "XBColorSupport.h"
+
+//喜报版本号
+#define XIBAOVERSION @"2.8"
+
+#pragma mark - 项目 默认项
+//找回密码
+#define  KALLNum  @"0123456789"
+#define COUNT 120
+#define canGetCheckcode_yes @"YES"
+#define FcanGetCheckcode_no  @"NO"
+
+
+#define Remember       @"YES"
+#define unRemember     @"NO"
+
+
+#pragma mark - 程序辅助
+//是否是IPhoneX
+#define iPhoneX ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? (CGSizeEqualToSize(CGSizeMake(1125, 2436), [[UIScreen mainScreen] currentMode].size)||CGSizeEqualToSize(CGSizeMake(1242, 2688), [[UIScreen mainScreen] currentMode].size)||CGSizeEqualToSize(CGSizeMake(828, 1792), [[UIScreen mainScreen] currentMode].size)) : NO)
+
+#define IS_PAD (UI_USER_INTERFACE_IDIOM()== UIUserInterfaceIdiomPad)
+
+
+#define IS_IPHONEX ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(1125, 2436), [[UIScreen mainScreen] currentMode].size) && !IS_PAD : NO)
+#define IS_IPHONE_Xr ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(828, 1792), [[UIScreen mainScreen] currentMode].size) && !IS_PAD : NO)
+#define IS_IPHONE_Xs_Max ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(1242, 2688), [[UIScreen mainScreen] currentMode].size)&& !IS_PAD : NO)
+
+
+#define PASSWORDLIMIT @"1234567890QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm"
+
+//当string未nil，或null时格式化为replaceString
+#define FormatString(string,replaceString) (string == nil || (NSNull *)string == [NSNull null])?replaceString:string
+
+#define FS(string) (string == nil || (NSNull *)string == [NSNull null])?@"":string
+
+//Frame (宏 x, y, width, height)
+#define isiOS7 ([[UIDevice currentDevice].systemVersion doubleValue]>=7.0)
+
+
+#define ApplicationDelegate         ((AppDelegate *)[[UIApplication sharedApplication] delegate])
+//obj是否是Class类型
+#define ISCLASS(Class,obj)[obj isKindOfClass:[Class class]]
+
+//#define DEGREES_TO_RADIANS(x) (M_PI * (x) / 180.0)
+
+//沙盒路径
+#define PATH_OF_APP_HOME    NSHomeDirectory()
+#define PATH_OF_CACHE        [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0]
+#define PATH_OF_TEMP        NSTemporaryDirectory()
+#define PATH_OF_DOCUMENT     [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0]
+
+//image
+#define GPImage(imageName) [UIImage imageNamed:imageName]
+
+//客户端类型
+#define iphone @"2"
+
+#define GPString(x)     NSLocalizedString(x, nil)
+#define GPFormat(x)     [NSString stringWithFormat:@"%@",x]
+
+#define AppLanguage @"appLanguage"
+#define Custing(key, comment) \
+[[NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"appLanguage"]] ofType:@"lproj"]] localizedStringForKey:(key) value:@"" table:nil]
+
+//判断字符串是否合法
+static inline BOOL isValidString(NSString *s)
+{
+    return (s && ISCLASS(NSString, s) && [s length]>0)?YES:NO;
+}
+//判断字典是否合法
+static inline BOOL isValidDictionary(NSDictionary *d)
+{
+    return (d && ISCLASS(NSDictionary, d))?YES:NO;
+}
+//判断Number是否合法
+static inline BOOL isValidNumber(id n)
+{
+    return (n && ISCLASS(NSNumber, n))?YES:NO;
+}
+
+//格式化Number
+static inline NSNumber * FormatNumber(NSObject *obj,id replaceNumber)
+{
+    NSNumber *result = replaceNumber;
+    if (obj && (isValidString((NSString *)obj) || isValidNumber(obj))){
+        result =  @([(NSString *)obj integerValue]);
+    }
+    return result;
+}
+
+#pragma mark - 页面相关
+
+// MainScreen Height&Width
+#define Main_Screen_Height      [[UIScreen mainScreen] bounds].size.height
+#define Main_Screen_Width       [[UIScreen mainScreen] bounds].size.width
+
+
+#define  SCALEH   [[UIScreen mainScreen] bounds].size.height/667
+
+// View 坐标(x,y)和宽高(width,height)
+#define X(v)                    (v).frame.origin.x
+#define Y(v)                    (v).frame.origin.y
+#define WIDTH(v)                (v).frame.size.width
+#define HEIGHT(v)               (v).frame.size.height
+
+#define MinX(v)                 CGRectGetMinX((v).frame)
+#define MinY(v)                 CGRectGetMinY((v).frame)
+
+#define MidX(v)                 CGRectGetMidX((v).frame)
+#define MidY(v)                 CGRectGetMidY((v).frame)
+
+#define MaxX(v)                 CGRectGetMaxX((v).frame)
+#define MaxY(v)                 CGRectGetMaxY((v).frame)
+
+
+//获取导航栏高度
+#define NavigationbarHeight (iPhoneX ?88.0:64.0)
+
+//开始栏
+#define StateBarHeight (iPhoneX ? 44.0:20.0)
+
+//获取状态栏高度
+#define StatusBarHeight  (([[UIApplication sharedApplication] statusBarFrame].size.height)>20 ? 20 :0)
+//获取当前屏幕的宽高
+#define ScreenRect [[UIScreen mainScreen] bounds]
+// 颜色(RGB)
+#define RGBA(r,g,b,a) [UIColor colorWithRed:r/255.0f green:g/255.0f blue:b/255.0f alpha:a]
+
+//外观颜色
+#define ColorPink          @"#d667cd"          //配色
+#define ColorGray          @"#8e8e92"          //灰色
+#define ColorBlack         @"#1d1d26"          //黑色字体
+#define ColorGrayGround    @"#f4f4f4"          //背景颜色
+#define ColorBanground     @"#f8f8f9"           //背景灰
+#define ColorGrayPlace     @"#cccbd0"          //place灰色
+
+#define CustomColorForLightText     @"#e5e5e5"          //线的背景
+#define CustomColorForGreenText     @"#4ec133"          //绿色字体
+#define CustomColorForRedText       @"#f85158"          //红色字体
+
+#define PeopleLineColor          @"#eeeeee"          //Cell底部划线
+
+#define LineColor          @"#f4f4f4"         //底部划线
+
+#define sidlispColor       @"#6d5cdc"         //侧边栏线条颜色
+#define sidlispLineColor_system2 @"#68677a"   //代理模式侧边栏线条颜色
+#define sidlispBgColor_system2 @"#36344d"     //代理模式侧边栏颜色
+
+#define searchBarColor  @"#c4c4c8"
+#define searchBarSignal @"#5752d3"  //搜索光标
+
+#define netErrorColor    @"#555557"
+#define goLoadingColor @"#f8f8fa"
+#define allBackGroundColor @"#7f7f7f"
+//reportTitle报销分析
+#define reporttitleColor  @"#56555a"
+#define LableColor          @"#8e8e92"     //灰色字体
+#define BlueColor           @"#5eadf0"       //蓝色
+#define greedColor          @"#40d76e"      //绿色
+#define RedColor            @"#fe558c"      //红色
+
+
+
+#define ApprovalNoteColor       @"#8d81e5"   //审批记录状态颜色
+#define ApprovalNoteFootColor   @"#eeeeee"//审批记录footview颜色
+#define ApprovalNoteBackColor   @"#fe100e"//审批记录退回颜色
+#define ApprovalNoteSubmitColor @"#8ae086"//审批记录提交颜色
+#define ApprovalNoteOtherColor  @"#d3d3d3"//审批记录字颜色
+#define ApprovalNoteTextColor   @"#5f5e5e"//审批记录字颜色
+#pragma mark - 全局定义
+
+
+
+//MARK:四大主页面
+
+#define Font_yearMonth_12           [UIFont systemFontOfSize:12.f] //年月
+#define Font_circleTitle_14         [UIFont systemFontOfSize:14.f] //圆上描述
+#define Font_noIconCellTitle_15     [UIFont systemFontOfSize:15.f] //无图标标题
+#define Font_noIconCellAmount_15    [UIFont systemFontOfSize:15.f] //无图标金额
+#define Font_headAmountFirst_28     [UIFont systemFontOfSize:28.f] //紫色金额
+#define Font_headAmoutSecond_14     [UIFont systemFontOfSize:14.f] //灰色金额
+#define Font_iconAmount_16          [UIFont systemFontOfSize:16.f] //有图标金额
+#define Font_iconTitle_12           [UIFont systemFontOfSize:12.f] //有图标标题
+#define Font_iconRadio_18           [UIFont systemFontOfSize:18.f] //有图标百分比
+
+#define Font_cellTime_12            [UIFont systemFontOfSize:12.f]
+#define Font_cellTitle_14           [UIFont systemFontOfSize:14.f]
+#define Font_selectTitle_15         [UIFont systemFontOfSize:15.f]
+#define Font_cellContent_16         [UIFont systemFontOfSize:16.f]
+#define Font_cellmoney_20           [UIFont systemFontOfSize:20.f]
+
+//#define Color_cellContent           [11GPUtils colorHString:ColorBlack]//黑体
+#define Color_cellContent           [XBColorSupport supportBlackStyleColor]
+#define Color_cellTitle             [GPUtils colorHString:LableColor]
+#define Color_cellPlace             [GPUtils colorHString:ColorGrayPlace]
+
+#define SYSTEMFONT(FONTSIZE)    [UIFont systemFontOfSize:FONTSIZE]
+//新字号
+typedef enum{
+    FontPointSize10 = 10,
+    FontPointSize11 = 11,
+    FontPointSize12 = 12,
+    FontPointSize13 = 13,
+    FontPointSize14 = 14,
+    FontPointSize15 = 15,
+    FontPointSize16 = 16,
+    FontPointSize17 = 17,
+    FontPointSize18 = 18,
+    FontPointSize19 = 19,
+    FontPointSize20 = 20,
+}FontPointSize;
+
+#endif
+
+
+#pragma mark - new 设计规范(2.0)
+#pragma mark 颜色
+
+//用于特别强调和突出的文字、按钮和icon的模块底色，如界面整体颜色和重要文字搭配使用
+#define Color_Blue_Important_20      [GPUtils colorHString:@"#02adfc"]
+
+//用于重要级文字信息、内页标题信息，如导航名称、大板块标题、类目名称等
+//#define Color_Black_Important_20     [GPUtils colorHString:@"#282828"]
+#define Color_Black_Important_20     [XBColorSupport supportImportantTextColor]
+#define Color_Unsel_TitleColor   [XBColorSupport supportUnselectedTabbarTitleColor]
+//用于普通级段落信息，如用户名、设置内标签文字信息
+//#define Color_GrayDark_Same_20       [GPUtils colorHString:@"#999999"]
+#define Color_GrayDark_Same_20 [XBColorSupport supportOrdinaryParagraphTextColor]
+//用于分割模块的底色
+//#define Color_White_Same_20          [GPUtils colorHString:@"#f5f5f9"]
+#define Color_White_Same_20   [XBColorSupport supportBackGroundColorWithHString:@"#f5f5f9"]
+
+
+#define Color_NewWhite_Same_20          [GPUtils colorHString:@"#f1f1f1"]
+
+#define Color_NewDark_Same_20          [GPUtils colorHString:@"#f9f9f9"]
+
+//用于分割线的颜色
+//#define Color_GrayLight_Same_20      [GPUtils colorHString:@"#dddddd"]
+#define Color_GrayLight_Same_20 [XBColorSupport supportSeparatorColor]
+//替代符的颜色
+#define Color_LabelPlaceHolder_Same_20      [GPUtils colorHString:@"#cacacf"]
+
+//用于模块内容区域颜色
+//#define Color_WhiteWeak_Same_20      [GPUtils colorHString:@"#ffffff"]  
+#define Color_WhiteWeak_Same_20      [XBColorSupport supportFormTextFieldBackgroundColor]
+//模块上的阴影颜色
+//#define Color_LineGray_Same_20       [GPUtils colorHString:@"#cccccc"]
+#define Color_LineGray_Same_20        [XBColorSupport supportModuleShadowTextColor]
+//模块上的淡蓝色阴影颜色
+#define Color_ClearBlue_Same_20       [XBColorSupport supportClearBlueWithStr:@"#f2fbff"]
+//借款单模块上的阴影线颜色
+#define Color_BorrowLine_Same_20       [GPUtils colorHString:@"#e4e4e4"]
+
+//表单中显示文本颜色
+//#define Color_form_TextField_20      [GPUtils colorHString:@"#333333"]
+#define Color_form_TextField_20        [XBColorSupport supportFormTextFieldColorWithHString:@"#333333"]
+#define Color_form_TextFieldBackgroundColor      [XBColorSupport supportFormTextFieldBackgroundColor]
+#define Color_Sideslip_TableView      [GPUtils colorHString:@"#bbbbbb"]
+
+//弱 橙色
+#define Color_Orange_Weak_20         [GPUtils colorHString:@"#fea839"]
+//弱 红色
+#define Color_Red_Weak_20            [GPUtils colorHString:@"#ff6757"]
+//消息数量红色
+#define Color_Red_Message_20            [GPUtils colorHString:@"#e63340"]
+//弱 绿色
+#define Color_Green_Weak_20          [GPUtils colorHString:@"#76dab4"]
+//弱 紫色
+#define Color_Purple_Weak_20         [GPUtils colorHString:@"#b37fad"]
+//弱 黄色
+#define Color_Yellow_Weak_20         [GPUtils colorHString:@"#faee00"]
+
+
+#define Color_eaeaea_20         [GPUtils colorHString:@"#eaeaea"]
+
+#define Color_ImgHead_Circle         [GPUtils colorHString:@"cccccc"]
+
+
+//筛选模块
+//#define Color_FilterBackColor_Weak_20     [GPUtils colorHString:@"#eeeeee"]
+#define Color_FilterBackColor_Weak_20     [XBColorSupport supportScreeningModuleColor]
+#define Color_FilterLineColor_Weak_20    [GPUtils colorHString:@"#999999"]
+
+#define Color_Through_BackColor     [GPUtils colorHString:@"#76dbb4"]
+#define Color_Through_LineColor     [GPUtils colorHString:@"#3bc28e"]
+
+#define Color_NoPay_BackColor     [GPUtils colorHString:@"#ffa83a"]
+#define Color_NoPay_LineColor     [GPUtils colorHString:@"#e78508"]
+
+//消费记录上颜色
+//#define Color_CellDark_Same_28       [GPUtils colorHString:@"#282828"]
+#define Color_CellDark_Same_28  [XBColorSupport supportCellDarkSameWithStr:@"#282828"]
+#pragma mark 字体
+//金额着重表示
+#define Font_Amount_21_20   [UIFont systemFontOfSize:21.f]
+
+#define Font_Important_20_20         [UIFont systemFontOfSize:20.f]
+
+//重要、用于重要标题，重要的文字或操作按钮，如导航标题，分类名称等
+#define Font_Important_18_20         [UIFont systemFontOfSize:18.f]
+//按钮上字体
+#define Font_filterTitle_17         [UIFont systemFontOfSize:17.f]
+//重要、用于多数文字，如小标题等
+#define Font_Important_15_20         [UIFont systemFontOfSize:15.f]
+
+//一般、用于大多数文字，如用户ID，评论
+#define Font_Same_14_20              [UIFont systemFontOfSize:14.f]
+
+//一般、用于大多数文字，如用户ID，评论
+#define Font_Same_12_20              [UIFont systemFontOfSize:12.f]
+
+#define Font_Same_13_20              [UIFont systemFontOfSize:13.f]
+
+#define Font_Same_11_20              [UIFont systemFontOfSize:11.f]
+
+#define Font_Same_10_20              [UIFont systemFontOfSize:10.f]
+
+
+
+#pragma mark - IM 配置
+
+#import "CommonLibrary.h"
+
+
+#import "ConstHeader.h"
+
+#import "CustomUIHeader.h"
+
+#import "AppDelegate.h"
+
+
+#define SafeProtectionType @"SafeProtectionType"
+
+#define Define_addCost @"addCost"
+
+//节日样式
+#define FestivalStyle @"0"
+#define Color_Red_Festival_20         [GPUtils colorHString:@"#e30000"]
+
+//导航栏文字蓝色
+#define Normal_NavBar_TitleBlue_20     [GPUtils colorHString:@"#02adfc"]//Color_form_TextFieldBackgroundColor
+//导航栏文字灰色
+#define Noraml_NavBar_TitleGray_20    [GPUtils colorHString:@"#797979"]//Color_form_TextFieldBackgroundColor
+
+
+#define kDevice_Is_iPhone6 ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(750, 1334), [[UIScreen mainScreen] currentMode].size) : NO)
+#define kDevice_Is_iPhone6Plus ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(1242, 2208), [[UIScreen mainScreen] currentMode].size) : NO)
+
+
+#define XBHelper_Title_Width 70
+
+#define CancelBtnFrame CGRectMake(5, 0, 50, 40)
+
+#define NULLSAFE_ENABLED 1 //0 崩溃 1不崩溃
+
+
+
+

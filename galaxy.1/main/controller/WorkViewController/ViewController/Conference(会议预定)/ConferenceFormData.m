@@ -1,0 +1,371 @@
+//
+//  ConferenceFormData.m
+//  galaxy
+//
+//  Created by hfk on 2017/12/18.
+//  Copyright © 2017年 赵碚. All rights reserved.
+//
+
+#import "ConferenceFormData.h"
+
+@implementation ConferenceFormData
+-(instancetype)initWithStatus:(NSInteger)status{
+    self = [super initBaseWithStatus:status];
+    if (self) {
+        if (status==1) {
+            [self initializeNewData];
+        }else{
+            [self initializeHasData];
+        }
+    }
+    return self;
+}
+-(void)initializeNewData{
+    self.str_flowCode=@"F0018";
+    self.arr_isShowmsArray=[[NSMutableArray alloc]initWithArray:@[@"RequestorDeptId",@"BranchId",@"RequestorBusDeptId",@"AreaId",@"LocationId",@"Name",@"TypeId",@"RoomId",@"StaffId",@"MeetingNum",@"Equipment",@"OpenMethod",@"ProjId",@"ClientId",@"SupplierId",@"DetailList",@"Reserved1",@"Reserved2",@"Reserved3",@"Reserved4",@"Reserved5",@"Reserved6",@"Reserved7",@"Reserved8",@"Reserved9",@"Reserved10",@"Remark",@"Attachments",@"FirstHandlerUserName",@"CcUsersName"]];
+    self.arr_UnShowmsArray=[[NSMutableArray alloc]initWithArray:self.arr_isShowmsArray];
+
+    self.str_TypeId=@"";
+    self.str_Type=@"";
+    self.str_StaffId=@"";
+    self.str_StaffName=@"";
+    self.str_OpenMethodId=@"";
+    self.str_RoomId=@"";
+    self.str_RoomName=@"";
+    self.str_FromeDate=@"";
+    self.str_ToDate=@"";
+  
+}
+
+-(void)initializeHasData{
+    
+    self.str_flowCode=@"F0018";
+    self.bool_isOpenDetail=NO;
+}
+
+-(NSString *)OpenFormUrl{
+    if (self.int_formStatus==1) {
+        return [NSString stringWithFormat:@"%@",MEETINGList];
+    }else{
+        return [NSString stringWithFormat:@"%@",HasMEETINGList];
+    }
+}
+
+-(void)DealWithFormBaseData{
+
+    NSDictionary *result=[self.dict_resultDict objectForKey:@"result"];
+    if (![result isKindOfClass:[NSNull class]]) {
+        
+        [self getFormSettingBaseData:result];
+        
+        self.bool_DetailsShow=[[NSString stringWithFormat:@"%@",result[@"meetingDetail"]] isEqualToString:@"1"]?YES:NO;
+        
+        //主表数据
+        NSDictionary *formDict=[result objectForKey:@"formFields"];
+        if (![formDict isKindOfClass:[NSNull class]]) {
+            [self getFirGroupDetail:formDict];
+            NSArray *mainFld = [formDict objectForKey:@"mainFld"];
+            if (mainFld.count!=0) {
+                for (NSDictionary *dict in mainFld) {
+                    [self getMainFormShowAndData:dict WithAttachmentsMaxCount:5];
+                    if ([dict[@"fieldName"] isEqualToString:@"Type"]) {
+                        self.str_Type=[dict objectForKey:@"fieldValue"];
+                    }
+                    if ([dict[@"fieldName"] isEqualToString:@"RoomName"]) {
+                        self.str_RoomName=[dict objectForKey:@"fieldValue"];
+                    }
+                    if ([dict[@"fieldName"] isEqualToString:@"StaffName"]) {
+                        self.str_StaffName=[dict objectForKey:@"fieldValue"];
+                    }
+                }
+            }
+        }
+        
+        //明细数据
+        NSDictionary *formDataDict=[result objectForKey:@"formData"];
+        if (![formDataDict isKindOfClass:[NSNull class]]) {
+            NSArray *sa_ConferenceAppDetailArray=formDataDict[@"sa_MeetingDetail"];
+            for (NSDictionary *dict in sa_ConferenceAppDetailArray) {
+                ConferenceDeatil *model=[[ConferenceDeatil alloc]init];
+                
+                if (![dict[@"subject"] isKindOfClass:[NSNull class]]) {
+                    model.Subject=[NSString stringWithFormat:@"%@",dict[@"subject"]];
+                }
+                if (![dict[@"spokesman"] isKindOfClass:[NSNull class]]) {
+                    model.Spokesman=[NSString stringWithFormat:@"%@",dict[@"spokesman"]];
+                }
+                if (![dict[@"remark"] isKindOfClass:[NSNull class]]) {
+                    model.Remark=[NSString stringWithFormat:@"%@",dict[@"remark"]];
+                }
+                [self.arr_DetailsDataArray addObject:model];
+            }
+        }
+
+    }
+}
+
+-(NSMutableArray *)arr_OpenMethod{
+    if (_arr_OpenMethod==nil) {
+        _arr_OpenMethod=[NSMutableArray array];
+        NSArray *type=@[Custing(@"公开", nil),Custing(@"不公开", nil)];
+        NSArray *code=@[@"1",@"2"];
+        for (int i=0; i<type.count; i++) {
+            STOnePickModel *model=[[STOnePickModel alloc]init];
+            model.Type=type[i];
+            model.Id=code[i];
+            [_arr_OpenMethod addObject:model];
+        }
+    }
+    return _arr_OpenMethod;
+}
+
+-(NSString *)getOpenMethodId:(id)OpenMethodId{
+    NSString *OpenMethod=@"";
+    if ([[NSString stringWithFormat:@"%@",OpenMethodId] isEqualToString:@"1"]) {
+        self.str_OpenMethodId=@"1";
+        OpenMethod=Custing(@"公开", nil);
+    }else if ([[NSString stringWithFormat:@"%@",OpenMethodId]isEqualToString:@"2"]){
+        self.str_OpenMethodId=@"2";
+        OpenMethod=Custing(@"不公开", nil);
+    }
+    return OpenMethod;
+}
+
+-(void)inModelContent{
+    self.SubmitData=[[ConferenceData alloc]init];
+    
+    self.SubmitData.OperatorUserId = self.personalData.OperatorUserId;
+    self.SubmitData.Operator = self.personalData.Operator;
+    self.SubmitData.OperatorDeptId = self.personalData.OperatorDeptId;
+    self.SubmitData.OperatorDept = self.personalData.OperatorDept;
+    self.SubmitData.RequestorUserId = self.personalData.RequestorUserId;
+    self.SubmitData.Requestor = self.personalData.Requestor;
+    self.SubmitData.RequestorAccount = self.personalData.RequestorAccount;
+    self.SubmitData.RequestorDeptId = self.personalData.RequestorDeptId;
+    self.SubmitData.RequestorDept = self.personalData.RequestorDept;
+    self.SubmitData.JobTitleCode = self.personalData.JobTitleCode;
+    self.SubmitData.JobTitle = self.personalData.JobTitle;
+    self.SubmitData.JobTitleLvl = self.personalData.JobTitleLvl;
+    self.SubmitData.UserLevelId = self.personalData.UserLevelId;
+    self.SubmitData.UserLevel = self.personalData.UserLevel;
+    self.SubmitData.HRID = self.personalData.Hrid;
+    self.SubmitData.Branch = self.personalData.Branch;
+    self.SubmitData.BranchId = self.personalData.BranchId;
+    self.SubmitData.RequestorBusDept = self.personalData.RequestorBusDept;
+    self.SubmitData.RequestorBusDeptId = self.personalData.RequestorBusDeptId;
+    self.SubmitData.AreaId = self.personalData.AreaId;
+    self.SubmitData.Area = self.personalData.Area;
+    self.SubmitData.LocationId = self.personalData.LocationId;
+    self.SubmitData.Location = self.personalData.Location;
+    self.SubmitData.UserReserved1 = self.personalData.UserReserved1;
+    self.SubmitData.UserReserved2 = self.personalData.UserReserved2;
+    self.SubmitData.UserReserved3 = self.personalData.UserReserved3;
+    self.SubmitData.UserReserved4 = self.personalData.UserReserved4;
+    self.SubmitData.UserReserved5 = self.personalData.UserReserved5;
+    self.SubmitData.UserLevelNo = self.personalData.UserLevelNo;
+    self.SubmitData.ApproverId1 = self.personalData.ApproverId1;
+    self.SubmitData.ApproverId2 = self.personalData.ApproverId2;
+    self.SubmitData.ApproverId3 = self.personalData.ApproverId3;
+    self.SubmitData.ApproverId4 = self.personalData.ApproverId4;
+    self.SubmitData.ApproverId5 = self.personalData.ApproverId5;
+    self.SubmitData.RequestorDate=self.personalData.RequestorDate;
+    
+    self.SubmitData.Attachments = (self.arr_totalFileArray.count!=0)?@"1":@"";
+    self.SubmitData.FirstHandlerUserId = self.str_firstHanderId;
+    self.SubmitData.FirstHandlerUserName = self.str_firstHanderName;
+    self.SubmitData.CompanyId = self.personalData.CompanyId;
+    self.SubmitData.Reserved1 = self.model_ReserverModel.Reserverd1;
+    self.SubmitData.Reserved2 = self.model_ReserverModel.Reserverd2;
+    self.SubmitData.Reserved3 = self.model_ReserverModel.Reserverd3;
+    self.SubmitData.Reserved4 = self.model_ReserverModel.Reserverd4;
+    self.SubmitData.Reserved5 = self.model_ReserverModel.Reserverd5;
+    self.SubmitData.Reserved6 = self.model_ReserverModel.Reserverd6;
+    self.SubmitData.Reserved7 = self.model_ReserverModel.Reserverd7;
+    self.SubmitData.Reserved8 = self.model_ReserverModel.Reserverd8;
+    self.SubmitData.Reserved9 = self.model_ReserverModel.Reserverd9;
+    self.SubmitData.Reserved10 = self.model_ReserverModel.Reserverd10;
+    self.SubmitData.CcUsersId = self.str_CcUsersId;
+    self.SubmitData.CcUsersName = self.str_CcUsersName;
+
+    
+    self.SubmitData.TypeId=self.str_TypeId;
+    self.SubmitData.Type=self.str_Type;
+    self.SubmitData.RoomId=self.str_RoomId;
+    self.SubmitData.RoomName=self.str_RoomName;
+    self.SubmitData.FromDate=self.str_FromeDate;
+    self.SubmitData.ToDate=self.str_ToDate;
+    self.SubmitData.OpenMethod=self.str_OpenMethodId;
+
+    self.SubmitData.StaffId=self.str_StaffId;
+    self.SubmitData.StaffName=self.str_StaffName;
+
+    self.SubmitData.ClientId = self.personalData.ClientId;
+    self.SubmitData.ClientName = self.personalData.ClientName;
+    self.SubmitData.SupplierId = self.personalData.SupplierId;
+    self.SubmitData.SupplierName = self.personalData.SupplierName;
+    
+    self.SubmitData.ProjId = self.personalData.ProjId;
+    self.SubmitData.ProjName = self.personalData.ProjName;
+    self.SubmitData.ProjMgrUserId = self.personalData.ProjMgrUserId;
+    self.SubmitData.ProjMgr = self.personalData.ProjMgr;
+
+}
+
+-(NSString *)testModel{
+    ConferenceData *model=self.SubmitData;
+    NSString *returnTips;
+    NSMutableDictionary *modeldic = [ConferenceData initDicByModel:model];
+    for (NSString *str in self.arr_isShowmsArray) {
+        NSString *key = str;
+        if ([key isEqualToString:@"DetailList"]) {
+            for (NSString *str in self.arr_isShowmDetailArray) {
+                NSString *i=[NSString stringWithFormat:@"%@",[self.dict_isRequiredmsDetaildic objectForKey:str]];
+                if ([i isEqualToString:@"1"]) {
+                    for (ConferenceDeatil *model in self.arr_DetailsDataArray) {
+                        NSString *detailStr;
+                        if ([str isEqualToString:@"Subject"]){
+                            detailStr=model.Subject;
+                        }else if ([str isEqualToString:@"Spokesman"]){
+                            detailStr=model.Spokesman;
+                        }else if ([str isEqualToString:@"Remark"]){
+                            detailStr=model.Remark;
+                        }
+                        if (![NSString isEqualToNull:detailStr]) {
+                            returnTips=[self showerrorDetail:str];
+                            goto when_failed;
+                        }
+                    }
+                }
+            }
+        }else{
+            NSString *i = [NSString stringWithFormat:@"%@",[self.dict_isRequiredmsdic objectForKey:key]];
+            if ([i isEqualToString:@"1"]) {
+                NSString *str =[NSString stringWithFormat:@"%@",[modeldic objectForKey:key]];
+                if (![NSString isEqualToNull:str]) {
+                    returnTips=[self showerror:key];
+                    break ;
+                }
+            }
+        }
+    }
+when_failed:
+    return returnTips;
+}
+//MARK:显示主表必填项判断
+-(NSString *)showerror:(NSString*)info{
+    NSString *showinfo = nil;
+    if ([info isEqualToString:@"RequestorDeptId"]) {
+        showinfo =Custing(@"请选择部门", nil) ;
+    }else if([info isEqualToString:@"BranchId"]) {
+        showinfo =Custing(@"请选择公司", nil) ;
+    }else if([info isEqualToString:@"RequestorBusDeptId"]) {
+        showinfo = Custing(@"请选择业务部门", nil);
+    }else if([info isEqualToString:@"AreaId"]) {
+        showinfo =Custing(@"请选择地区", nil) ;
+    }else if([info isEqualToString:@"LocationId"]) {
+        showinfo =Custing(@"请选择办事处", nil) ;
+    }else if([info isEqualToString:@"Name"]) {
+        showinfo = Custing(@"请输入会议名称", nil);
+    }else if([info isEqualToString:@"TypeId"]) {
+        showinfo = Custing(@"请选择会议类型", nil);
+    }else if([info isEqualToString:@"RoomId"]) {
+        showinfo = Custing(@"请选择会议室", nil);
+    }else if([info isEqualToString:@"StaffId"]) {
+        showinfo = Custing(@"请选择参会人员", nil);
+    }else if([info isEqualToString:@"MeetingNum"]) {
+        showinfo = Custing(@"请输入参会人数", nil);
+    }else if([info isEqualToString:@"Equipment"]) {
+        showinfo = Custing(@"请输入需要使用设备", nil);
+    }else if([info isEqualToString:@"OpenMethod"]) {
+        showinfo = Custing(@"请选择公开方法", nil);
+    }else if([info isEqualToString:@"ProjId"]) {
+        showinfo = Custing(@"请选择项目", nil);
+    }else if([info isEqualToString:@"ClientId"]) {
+        showinfo = Custing(@"请选择客户", nil);
+    }else if([info isEqualToString:@"SupplierId"]) {
+        showinfo = Custing(@"请选择供应商", nil);
+    }else if([info isEqualToString:@"Remark"]) {
+        showinfo = Custing(@"请输入备注", nil);
+    }else if([info isEqualToString:@"Attachments"]) {
+        showinfo = Custing(@"请选择附件", nil);
+    }else if([info isEqualToString:@"Reserved1"]||[info isEqualToString:@"Reserved2"]||[info isEqualToString:@"Reserved3"]||[info isEqualToString:@"Reserved4"]||[info isEqualToString:@"Reserved5"]||[info isEqualToString:@"Reserved6"]||[info isEqualToString:@"Reserved7"]||[info isEqualToString:@"Reserved8"]||[info isEqualToString:@"Reserved9"]||[info isEqualToString:@"Reserved10"]) {
+        showinfo =[[self.dict_isCtrlTypdic objectForKey:info] isEqualToString:@"text"]?[NSString stringWithFormat:@"%@%@",Custing(@"请输入", nil),[self.dict_reservedDic objectForKey:info]]:[NSString stringWithFormat:@"%@%@",Custing(@"请选择", nil),[self.dict_reservedDic objectForKey:info]];
+    }else if([info isEqualToString:@"FirstHandlerUserName"]) {
+        showinfo = Custing(@"请选择审批人", nil);
+    }else if([info isEqualToString:@"CcUsersName"]) {
+        showinfo = Custing(@"请选择抄送人", nil);
+    }
+    return showinfo;
+}
+//MARK:显示明细必填项判断
+-(NSString *)showerrorDetail:(NSString*)info{
+    NSString *showinfo = nil;
+    if ([info isEqualToString:@"Subject"]) {
+        showinfo = Custing(@"请输入主题", nil);
+    }else if ([info isEqualToString:@"Spokesman"]) {
+        showinfo = Custing(@"请输入发言人", nil);
+    }else if ([info isEqualToString:@"Remark"]) {
+        showinfo = Custing(@"请输入备注", nil);
+    }
+    return showinfo;
+}
+
+-(void)contectData{
+    self.dict_parametersDict=[NSDictionary dictionary];
+    NSMutableArray *mainArray=[[NSMutableArray alloc]init];
+    NSMutableDictionary *Sa_MeetingApp = [[NSMutableDictionary alloc]init];
+    NSMutableArray *fieldNamesArr = [[NSMutableArray alloc]init];
+    NSMutableArray *fieldValuesArr = [[NSMutableArray alloc]init];
+    NSMutableDictionary *modelDic=[ConferenceData initDicByModel:self.SubmitData];
+    for(id key in modelDic)
+    {
+        [fieldNamesArr addObject:key];
+        [fieldValuesArr addObject:[modelDic objectForKey:key]];
+    }
+    [Sa_MeetingApp setObject:@"Sa_MeetingApp" forKey:@"tableName"];
+    [Sa_MeetingApp setObject:fieldNamesArr forKey:@"fieldNames"];
+    [Sa_MeetingApp setObject:fieldValuesArr forKey:@"fieldValues"];
+    [mainArray addObject:Sa_MeetingApp];
+    
+    
+    
+    NSMutableArray *detailedArray=[[NSMutableArray alloc]init];
+    NSMutableDictionary *Sa_MeetingDetail = [[NSMutableDictionary alloc]init];
+    NSArray *fieldNames = [NSArray array];
+    NSMutableArray *Values=[NSMutableArray array];
+    if (self.arr_DetailsDataArray.count!=0) {
+        NSMutableDictionary *modelsDic=[ConferenceDeatil initDicByModel:self.arr_DetailsDataArray[0]];
+        fieldNames = [modelsDic allKeys];
+        for (NSString *key in fieldNames) {
+            NSMutableArray  *array=[NSMutableArray array];
+            for (ConferenceDeatil *model in self.arr_DetailsDataArray) {
+                if ([NSString isEqualToNull:[model valueForKey:key]]) {
+                    [array addObject:[model valueForKey:key]];
+                }else{
+                    [array addObject:(id)[NSNull null]];
+                }
+            }
+            [Values addObject:array];
+        }
+        [Sa_MeetingDetail setObject:@"Sa_MeetingDetail" forKey:@"tableName"];
+        [Sa_MeetingDetail setObject:fieldNames forKey:@"fieldNames"];
+        [Sa_MeetingDetail setObject:Values forKey:@"fieldBigValues"];
+    }else{
+        [Sa_MeetingDetail setObject:@"Sa_MeetingDetail" forKey:@"tableName"];
+        [Sa_MeetingDetail setObject:fieldNames forKey:@"fieldNames"];
+        [Sa_MeetingDetail setObject:Values forKey:@"fieldBigValues"];
+    }
+    
+    [detailedArray addObject:Sa_MeetingDetail];
+    self.dict_parametersDict=@{@"mainDataList":mainArray,@"detailedDataList":detailedArray};
+}
+
+-(NSString *)getTableName{
+    return [NSString stringWithFormat:@"%@",@"Sa_MeetingApp"];
+}
+
+-(NSString *)getCommonField{
+    NSDictionary *dict=@{@"RoomId":self.str_RoomId,@"StartTime":self.str_FromeDate,@"EndTime":self.str_ToDate};
+    return [NSString transformToJson:dict];
+}
+@end

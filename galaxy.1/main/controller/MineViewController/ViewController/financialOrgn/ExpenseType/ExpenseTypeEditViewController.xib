@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14868" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14824"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ExpenseTypeEditViewController">
+            <connections>
+                <outlet property="tbv_tableview" destination="YGv-DP-dHm" id="Vky-ZT-gDs"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="808"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="c7f-Xq-oyr">
+                    <rect key="frame" x="0.0" y="764" width="414" height="44"/>
+                    <color key="backgroundColor" red="0.0" green="0.62352941179999999" blue="0.98039215690000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="44" id="Zgs-NG-x2c"/>
+                        <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="44" id="f8h-L4-sMe"/>
+                    </constraints>
+                    <state key="normal" title="End">
+                        <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    </state>
+                    <connections>
+                        <action selector="btn_end_click:" destination="-1" eventType="touchUpInside" id="d8E-r5-okl"/>
+                    </connections>
+                </button>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="YGv-DP-dHm">
+                    <rect key="frame" x="0.0" y="0.0" width="414" height="764"/>
+                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                </tableView>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="c7f-Xq-oyr" firstAttribute="top" secondItem="YGv-DP-dHm" secondAttribute="bottom" id="V2k-Ey-woI"/>
+                <constraint firstAttribute="trailing" secondItem="YGv-DP-dHm" secondAttribute="trailing" id="VBW-aC-hHe"/>
+                <constraint firstAttribute="bottom" secondItem="c7f-Xq-oyr" secondAttribute="bottom" id="WiL-9n-Svc"/>
+                <constraint firstItem="YGv-DP-dHm" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="fW4-mc-T6L"/>
+                <constraint firstItem="YGv-DP-dHm" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="igJ-Qu-e2r"/>
+                <constraint firstAttribute="trailing" secondItem="c7f-Xq-oyr" secondAttribute="trailing" id="oaz-jB-QgN"/>
+                <constraint firstItem="c7f-Xq-oyr" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="qtQ-sm-oPM"/>
+            </constraints>
+            <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO"/>
+            <point key="canvasLocation" x="34" y="54"/>
+        </view>
+    </objects>
+</document>

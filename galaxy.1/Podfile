@@ -1,0 +1,20 @@
+#source 'https://github.com/CocoaPods/Specs.git'
+platform :ios, '9.0'
+target 'galaxy' do
+  pod 'pop', '~> 1.0'
+  pod 'UMCCommon'
+  pod 'UMCPush'
+  pod 'UMCSecurityPlugins'
+  pod 'UMengUShare/UI'
+  pod 'UMengUShare/Social/Sina'
+  pod 'UMengUShare/Social/WeChat'
+  pod 'UMengUShare/Social/QQ'
+  pod 'AFNetworking', '~> 3.1.0'
+  pod 'AMapLocation'
+  pod 'AMapSearch'
+  pod 'AMap2DMap'
+  pod 'ZXingObjC'
+  pod 'FSCalendar'
+  pod 'VasSonic', '3.0.0'
+
+end

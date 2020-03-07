@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14868" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14824"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="KGk-i7-Jjw" customClass="MyBillTableViewCell">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="142"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="142"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="U70-b5-cly">
+                        <rect key="frame" x="15" y="5" width="290" height="132"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="小主，你的五月份账单来啦！" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fWE-kQ-FtA">
+                                <rect key="frame" x="15" y="15" width="195" height="18"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <color key="textColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2016-04-22" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LjR-tQ-K3m">
+                                <rect key="frame" x="15" y="41" width="74.5" height="16"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                <color key="textColor" red="0.47450980390000003" green="0.47450980390000003" blue="0.47450980390000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="费用总和：" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tOJ-VY-bXu">
+                                <rect key="frame" x="15" y="73" width="75" height="18"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <color key="textColor" red="0.0078431372550000003" green="0.67843137249999996" blue="0.98823529409999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="DTB-Ip-EnN">
+                                <rect key="frame" x="0.0" y="101" width="290" height="0.5"/>
+                                <color key="backgroundColor" red="0.8666666666666667" green="0.8666666666666667" blue="0.8666666666666667" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="0.5" id="JcE-2n-Tg6"/>
+                                </constraints>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="查看详情" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aYU-Lx-bjs">
+                                <rect key="frame" x="15" y="109.5" width="60" height="18"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <color key="textColor" red="0.47450980390000003" green="0.47450980390000003" blue="0.47450980390000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ApproveRemind_Right.png" translatesAutoresizingMaskIntoConstraints="NO" id="avS-63-THp">
+                                <rect key="frame" x="266" y="109.5" width="9" height="14"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="9" id="Aqt-J8-XBi"/>
+                                    <constraint firstAttribute="height" constant="14" id="u2j-uW-N7P"/>
+                                </constraints>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="132" id="2SL-Ah-A4f"/>
+                            <constraint firstItem="DTB-Ip-EnN" firstAttribute="leading" secondItem="U70-b5-cly" secondAttribute="leading" id="DiT-TN-EBV"/>
+                            <constraint firstItem="fWE-kQ-FtA" firstAttribute="top" secondItem="U70-b5-cly" secondAttribute="top" constant="15" id="Fmy-ru-4kX"/>
+                            <constraint firstAttribute="trailing" secondItem="avS-63-THp" secondAttribute="trailing" constant="15" id="IA3-j7-dD4"/>
+                            <constraint firstItem="DTB-Ip-EnN" firstAttribute="top" secondItem="tOJ-VY-bXu" secondAttribute="bottom" constant="10" id="UWP-Ti-LeF"/>
+                            <constraint firstItem="fWE-kQ-FtA" firstAttribute="leading" secondItem="U70-b5-cly" secondAttribute="leading" constant="15" id="WXy-HK-67N"/>
+                            <constraint firstItem="LjR-tQ-K3m" firstAttribute="leading" secondItem="U70-b5-cly" secondAttribute="leading" constant="15" id="djV-vI-zH2"/>
+                            <constraint firstItem="avS-63-THp" firstAttribute="top" secondItem="DTB-Ip-EnN" secondAttribute="bottom" constant="8" id="dzu-Wk-Ykx"/>
+                            <constraint firstItem="aYU-Lx-bjs" firstAttribute="top" secondItem="DTB-Ip-EnN" secondAttribute="bottom" constant="8" id="ebO-O3-qUl"/>
+                            <constraint firstItem="aYU-Lx-bjs" firstAttribute="leading" secondItem="U70-b5-cly" secondAttribute="leading" constant="15" id="gMB-1W-THj"/>
+                            <constraint firstAttribute="trailing" secondItem="DTB-Ip-EnN" secondAttribute="trailing" id="jhr-hM-oHO"/>
+                            <constraint firstItem="LjR-tQ-K3m" firstAttribute="top" secondItem="fWE-kQ-FtA" secondAttribute="bottom" constant="8" id="oAM-Xe-aw3"/>
+                            <constraint firstItem="tOJ-VY-bXu" firstAttribute="leading" secondItem="U70-b5-cly" secondAttribute="leading" constant="15" id="v6X-T2-jKj"/>
+                            <constraint firstItem="tOJ-VY-bXu" firstAttribute="top" secondItem="LjR-tQ-K3m" secondAttribute="bottom" constant="16" id="wKE-kF-sGx"/>
+                        </constraints>
+                    </view>
+                </subviews>
+                <color key="backgroundColor" red="0.96470588239999999" green="0.96470588239999999" blue="0.97647058819999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                <constraints>
+                    <constraint firstItem="U70-b5-cly" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="80D-uO-Sj4"/>
+                    <constraint firstAttribute="trailing" secondItem="U70-b5-cly" secondAttribute="trailing" constant="15" id="ISz-oL-B3r"/>
+                    <constraint firstItem="U70-b5-cly" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="15" id="dMK-p2-VL8"/>
+                </constraints>
+            </tableViewCellContentView>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <connections>
+                <outlet property="view_backView" destination="U70-b5-cly" id="ppj-XA-DE7"/>
+            </connections>
+            <point key="canvasLocation" x="34" y="54"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="ApproveRemind_Right.png" width="6.5" height="12.5"/>
+    </resources>
+</document>

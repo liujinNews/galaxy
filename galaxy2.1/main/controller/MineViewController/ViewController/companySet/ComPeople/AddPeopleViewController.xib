@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11542" systemVersion="16B2657" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11524"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="AddPeopleViewController">
+            <connections>
+                <outlet property="btn_btnClick" destination="nxt-m2-pWm" id="bzl-SN-8BQ"/>
+                <outlet property="btn_btnDelect" destination="93c-UY-Kmz" id="8CR-8h-dTR"/>
+                <outlet property="lc_btn_ok" destination="ZwV-G3-SfT" id="cvQ-Rb-mm2"/>
+                <outlet property="tab_table" destination="Ld8-2d-ME9" id="Ncm-lU-8a8"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="603"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Ld8-2d-ME9">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="559"/>
+                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                </tableView>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="cDM-p2-zVg">
+                    <rect key="frame" x="1200" y="559" width="1" height="44"/>
+                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="1" id="amP-MN-PLH"/>
+                    </constraints>
+                </imageView>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="93c-UY-Kmz">
+                    <rect key="frame" x="1201" y="559" width="1200" height="44"/>
+                    <color key="backgroundColor" red="0.0078431372550000003" green="0.67843137249999996" blue="0.98823529409999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="600" id="nz0-kt-8iI"/>
+                        <constraint firstAttribute="height" constant="44" id="qDF-8K-c3N"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                    <state key="normal" title="删除">
+                        <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    </state>
+                    <variation key="default">
+                        <mask key="constraints">
+                            <exclude reference="nz0-kt-8iI"/>
+                        </mask>
+                    </variation>
+                    <connections>
+                        <action selector="btn_delect_click:" destination="-1" eventType="touchUpInside" id="Riu-z1-K2Y"/>
+                    </connections>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nxt-m2-pWm">
+                    <rect key="frame" x="0.0" y="559" width="1200" height="44"/>
+                    <color key="backgroundColor" red="0.0078431372550000003" green="0.67843137249999996" blue="0.98823529409999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="1200" id="ZwV-G3-SfT"/>
+                        <constraint firstAttribute="height" constant="44" id="m8k-x2-wlU"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                    <state key="normal" title="提交">
+                        <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    </state>
+                    <connections>
+                        <action selector="add_click:" destination="-1" eventType="touchUpInside" id="CLl-dZ-pYm"/>
+                    </connections>
+                </button>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="nxt-m2-pWm" secondAttribute="bottom" id="1cP-Hu-b6R"/>
+                <constraint firstItem="cDM-p2-zVg" firstAttribute="height" secondItem="nxt-m2-pWm" secondAttribute="height" id="7G5-k9-9Sg"/>
+                <constraint firstItem="Ld8-2d-ME9" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="EzC-AN-CEB"/>
+                <constraint firstItem="93c-UY-Kmz" firstAttribute="leading" secondItem="cDM-p2-zVg" secondAttribute="trailing" id="GHI-ST-D3d"/>
+                <constraint firstItem="nxt-m2-pWm" firstAttribute="top" secondItem="Ld8-2d-ME9" secondAttribute="bottom" id="RJa-Bc-HZU"/>
+                <constraint firstAttribute="trailing" secondItem="nxt-m2-pWm" secondAttribute="trailing" id="Vf7-ZW-I6g"/>
+                <constraint firstItem="93c-UY-Kmz" firstAttribute="top" secondItem="nxt-m2-pWm" secondAttribute="top" id="XAq-sY-NlX"/>
+                <constraint firstItem="Ld8-2d-ME9" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="fD5-lB-XIw"/>
+                <constraint firstItem="93c-UY-Kmz" firstAttribute="height" secondItem="nxt-m2-pWm" secondAttribute="height" id="gti-F4-GWO"/>
+                <constraint firstItem="93c-UY-Kmz" firstAttribute="width" secondItem="nxt-m2-pWm" secondAttribute="width" id="gwC-5u-OJx"/>
+                <constraint firstItem="cDM-p2-zVg" firstAttribute="leading" secondItem="nxt-m2-pWm" secondAttribute="trailing" id="o66-tp-GaA"/>
+                <constraint firstItem="nxt-m2-pWm" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="rxU-xz-bcH"/>
+                <constraint firstAttribute="trailing" secondItem="Ld8-2d-ME9" secondAttribute="trailing" id="xvi-i2-Bp8"/>
+                <constraint firstItem="cDM-p2-zVg" firstAttribute="top" secondItem="nxt-m2-pWm" secondAttribute="top" id="yYI-7v-M55"/>
+            </constraints>
+            <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
+            <variation key="default">
+                <mask key="constraints">
+                    <exclude reference="Vf7-ZW-I6g"/>
+                </mask>
+            </variation>
+        </view>
+    </objects>
+</document>

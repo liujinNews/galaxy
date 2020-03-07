@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11201" systemVersion="16A323" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CLLockVC">
+            <connections>
+                <outlet property="label" destination="eS4-xU-78v" id="RRN-pI-gpa"/>
+                <outlet property="lc_lockView_width" destination="uuZ-34-CD6" id="SPo-N3-OYd"/>
+                <outlet property="lockView" destination="yhf-NE-9vU" id="mDR-GR-ldZ"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT" customClass="CLLockMainView">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="KgF-qv-NVk">
+                    <subviews>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wiY-EU-cXp" customClass="CLLockInfoView">
+                            <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="40" id="Ecz-K4-mcB"/>
+                                <constraint firstAttribute="width" constant="40" id="v4h-NP-Qlk"/>
+                            </constraints>
+                        </view>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eS4-xU-78v" customClass="CLLockLabel">
+                            <constraints>
+                                <constraint firstAttribute="height" constant="30" id="5H4-ys-izd"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <color key="textColor" red="0.47450980390000003" green="0.47450980390000003" blue="0.47450980390000003" alpha="1" colorSpace="calibratedRGB"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                    </subviews>
+                    <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="150" id="IXM-uy-RbZ"/>
+                        <constraint firstItem="eS4-xU-78v" firstAttribute="leading" secondItem="KgF-qv-NVk" secondAttribute="leading" id="IhN-yt-gyD"/>
+                        <constraint firstAttribute="trailing" secondItem="eS4-xU-78v" secondAttribute="trailing" id="JUI-KT-V1v"/>
+                        <constraint firstItem="eS4-xU-78v" firstAttribute="top" secondItem="wiY-EU-cXp" secondAttribute="bottom" constant="20" id="Pe3-fq-368"/>
+                        <constraint firstItem="wiY-EU-cXp" firstAttribute="centerX" secondItem="KgF-qv-NVk" secondAttribute="centerX" id="XHI-hA-NmT"/>
+                        <constraint firstItem="wiY-EU-cXp" firstAttribute="top" secondItem="KgF-qv-NVk" secondAttribute="top" constant="20" id="prP-Jx-Z4L"/>
+                    </constraints>
+                </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yhf-NE-9vU" customClass="CLLockView">
+                    <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="width" secondItem="yhf-NE-9vU" secondAttribute="height" multiplier="1:1" id="vCg-Nb-FaA"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="KgF-qv-NVk" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="0Uo-c4-p8t"/>
+                <constraint firstItem="yhf-NE-9vU" firstAttribute="top" secondItem="KgF-qv-NVk" secondAttribute="bottom" id="LfB-pd-Jlm"/>
+                <constraint firstItem="KgF-qv-NVk" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="64" id="Qdh-dO-kd6"/>
+                <constraint firstAttribute="trailing" secondItem="KgF-qv-NVk" secondAttribute="trailing" id="igS-UN-fF1"/>
+                <constraint firstItem="yhf-NE-9vU" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="jdV-UK-LYM"/>
+                <constraint firstItem="yhf-NE-9vU" firstAttribute="width" secondItem="i5M-Pr-FkT" secondAttribute="width" constant="-40" id="uuZ-34-CD6"/>
+            </constraints>
+            <point key="canvasLocation" x="270.5" y="263.5"/>
+        </view>
+    </objects>
+</document>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SetDelegatePeopleVController">
+            <connections>
+                <outlet property="sea_Search" destination="kFG-N8-M2M" id="VXv-aR-nBh"/>
+                <outlet property="tab_tableview" destination="06b-EK-mbf" id="hr7-QH-Ux8"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="603"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="06b-EK-mbf">
+                    <rect key="frame" x="0.0" y="56" width="375" height="547"/>
+                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                </tableView>
+                <searchBar contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="kFG-N8-M2M">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="56"/>
+                    <textInputTraits key="textInputTraits"/>
+                </searchBar>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="kFG-N8-M2M" secondAttribute="trailing" id="1rq-xf-rPJ"/>
+                <constraint firstItem="06b-EK-mbf" firstAttribute="top" secondItem="kFG-N8-M2M" secondAttribute="bottom" id="7XP-7R-xgb"/>
+                <constraint firstAttribute="trailing" secondItem="06b-EK-mbf" secondAttribute="trailing" id="AQo-3P-r0R"/>
+                <constraint firstItem="06b-EK-mbf" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="IMM-qV-3Ne"/>
+                <constraint firstItem="kFG-N8-M2M" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="WOe-aY-Eu1"/>
+                <constraint firstAttribute="bottom" secondItem="06b-EK-mbf" secondAttribute="bottom" id="cIo-kg-iYK"/>
+                <constraint firstItem="06b-EK-mbf" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="44" id="sWd-xc-6C1"/>
+                <constraint firstItem="kFG-N8-M2M" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="uTh-Br-HFu"/>
+            </constraints>
+            <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO"/>
+            <variation key="default">
+                <mask key="constraints">
+                    <exclude reference="sWd-xc-6C1"/>
+                </mask>
+            </variation>
+        </view>
+    </objects>
+</document>

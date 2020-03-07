@@ -1,0 +1,21 @@
+
+/* Class = "UIButton"; normalTitle = "发票金额"; ObjectID = "EDU-cK-ULr"; */
+"EDU-cK-ULr.normalTitle" = "Amount";
+
+/* Class = "UIButton"; normalTitle = "发票号码"; ObjectID = "RZd-6j-C7Q"; */
+"RZd-6j-C7Q.normalTitle" = "Invoice No.";
+
+/* Class = "UIButton"; normalTitle = "开票时间"; ObjectID = "a68-a8-Qpz"; */
+"a68-a8-Qpz.normalTitle" = "Billing time";
+
+/* Class = "UIButton"; normalTitle = "收款方"; ObjectID = "bhs-Nm-Olc"; */
+"bhs-Nm-Olc.normalTitle" = "Payee";
+
+/* Class = "UIButton"; normalTitle = "付款方"; ObjectID = "lzK-q7-n3F"; */
+"lzK-q7-n3F.normalTitle" = "Payer";
+
+/* Class = "UIButton"; normalTitle = "开票项名称"; ObjectID = "xLm-YF-TPZ"; */
+"xLm-YF-TPZ.normalTitle" = "Invoice name";
+
+/* Class = "UIButton"; normalTitle = "发票代码"; ObjectID = "xXO-Xk-70F"; */
+"xXO-Xk-70F.normalTitle" = "Invoice code";

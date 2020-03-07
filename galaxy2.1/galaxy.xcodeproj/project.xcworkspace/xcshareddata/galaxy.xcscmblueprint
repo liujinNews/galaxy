@@ -1,0 +1,25 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "8f53ee7b-e565-4949-8980-53914b6c9e9f",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+    "8f53ee7b-e565-4949-8980-53914b6c9e9f" : {
+
+    }
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "8f53ee7b-e565-4949-8980-53914b6c9e9f" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "4D6C7D3F-3442-4210-B200-C26AFBA3D233",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "8f53ee7b-e565-4949-8980-53914b6c9e9f" : "work\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "galaxy",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "galaxy2.1\/galaxy.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "http:\/\/10.1.2.161:9099\/svn\/SaaSiOS",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Subversion",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "8f53ee7b-e565-4949-8980-53914b6c9e9f"
+    }
+  ]
+}
